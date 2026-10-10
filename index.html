@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Free, original practice for teacher-certification tests: instant-feedback practice, timed simulations, a written-response lab, and quick-review flashcards."></head><body>
-<title>Chalk &amp; Margin</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Comma: free, original practice for teacher-certification tests."></head><body>
+<title>Comma</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -84,7 +84,7 @@ select { padding: 8px 10px; border-radius: 3px; border: 1px solid var(--rule); b
 .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 4; background: var(--paper); border-bottom: 1px solid var(--ink); }
 .nav-in { max-width: var(--wrap); margin: 0 auto; padding-inline: 24px; display: flex; align-items: stretch; gap: 28px; min-height: 60px; }
 .brand { display: flex; align-items: center; gap: 2px; text-decoration: none; color: var(--ink); font-family: var(--font-display); font-size: 23px; font-weight: 500; letter-spacing: -.01em; white-space: nowrap; }
-.brand em { font-style: italic; color: var(--ember); padding-inline: 4px; font-weight: 400; }
+.brand em { font-style: normal; color: var(--ember); padding-inline: 1px 0; font-weight: 600; }
 .tabs-nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .tabs-nav::-webkit-scrollbar { display: none; }
 .tabs-nav a { display: flex; align-items: center; padding: 0 11px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 13.5px; white-space: nowrap; position: relative; }
@@ -98,7 +98,10 @@ select { padding: 8px 10px; border-radius: 3px; border: 1px solid var(--rule); b
 .who { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 3px 12px 3px 3px; cursor: pointer; font-weight: 600; font-size: 13.5px; max-width: 220px; }
 .who:hover { border-color: var(--ink); }
 .who .av, .pcard .av { width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-family: var(--font-display); font-size: 15px; font-style: italic; flex: none; }
-.who-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.who { padding: 2px; } .who .av { width: 32px; height: 32px; font-size: 14px; font-style: normal; font-family: var(--font-ui); font-weight: 700; letter-spacing: .02em; }
+.nav-adm { font-weight: 600; font-size: 13px; color: var(--ink); text-decoration: none; border: 1px solid var(--ink); padding: 5px 10px; border-radius: 2px; }
+.nav-adm[aria-current="page"], .nav-adm:hover { background: var(--ink); color: var(--paper); }
+.nav-fb { width: 32px; height: 32px; padding: 0 !important; border-radius: 50% !important; font-weight: 700; }
 .live-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; text-decoration: none; white-space: nowrap; }
 .live-pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 3px var(--good-soft); }
 .live-pill.zero i { background: var(--muted); box-shadow: none; }
@@ -163,6 +166,27 @@ p.lead { color: var(--muted); max-width: 62ch; margin: 0 0 22px; font-size: 17px
 .progress-strip .n { font-family: var(--font-display); font-size: 30px; line-height: 1; }
 .progress-strip small { display: block; color: var(--muted); font-size: 12.5px; }
 /* subject index: a book index with dot leaders */
+.acc { border-top: 1px solid var(--ink); }
+.acc summary { list-style: none; cursor: pointer; } .acc summary::-webkit-details-marker { display: none; }
+.acc-area { border-bottom: 1px solid var(--line); }
+.acc-area > summary { display: flex; align-items: baseline; gap: 14px; padding: 16px 4px; }
+.acc-area > summary .nm { font-family: var(--font-display); font-size: 23px; font-weight: 500; }
+.acc-area > summary small { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.acc summary::after { content: "+"; margin-left: auto; font-family: var(--font-mono); font-size: 18px; color: var(--muted); transition: transform .15s; }
+.acc details[open] > summary::after { content: "–"; color: var(--accent); }
+.acc-area > summary:hover .nm { color: var(--accent); }
+.acc-area[open] > summary { border-bottom: 2px solid var(--accent); }
+.acc-tests { padding: 4px 0 14px 18px; border-left: 1px solid var(--line); margin-left: 6px; }
+.acc-test { border-bottom: 1px dotted var(--line); }
+.acc-test > summary { display: flex; align-items: center; gap: 12px; padding: 11px 4px; font-weight: 600; }
+.acc-test > summary .cd { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-weight: 400; min-width: 3.4em; }
+.acc-test > summary .st { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 500; }
+.acc-test > summary:hover .t { text-decoration: underline; text-underline-offset: 3px; }
+.acc-go { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 4px 0 14px calc(3.4em + 16px); }
+@media (max-width: 560px) { .acc-go { padding-left: 4px; } .acc-go .btn { flex: 1 1 100%; } }
+.give-tag { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13.5px; color: var(--muted); text-decoration: none; }
+.give-tag .hrt { color: var(--ember); } .give-tag:hover { color: var(--ink); }
+@media (max-width: 640px) { .specimen figure { display: none; } .specimen { margin-top: 0; } .give-tag { margin-top: 4px; } }
 .shelf { columns: 2 320px; column-gap: 48px; }
 .shelf-group { break-inside: avoid; margin: 0 0 26px; }
 .shelf-group h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin: 0 0 6px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
@@ -488,10 +512,16 @@ details.rv-psg .psg { position: static; max-height: 360px; margin-top: 8px; }
 .selfscore > span { width: 100%; font-weight: 600; }
 
 /* ───── Written Response Lab: a writing desk ───── */
-.lab { display: grid; grid-template-columns: 250px minmax(0, 1fr) 300px; gap: 0; border-top: 1px solid var(--ink); min-height: 70vh; }
+.lab { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 0; border-top: 1px solid var(--ink); min-height: 70vh; }
 .lab-lib { border-right: 1px solid var(--line); padding: 18px 18px 18px 0; min-width: 0; }
 .lab-main { padding: 18px 26px 40px; min-width: 0; }
-.lab-coach { border-left: 1px solid var(--line); padding: 18px 0 18px 20px; min-width: 0; font-size: 14px; }
+.lab-coach { position: fixed; top: 0; right: 0; bottom: 0; width: min(400px, 92vw); z-index: 60; background: var(--surface); border-left: 1px solid var(--ink); box-shadow: -10px 0 0 color-mix(in srgb, var(--ink) 6%, transparent); padding: calc(18px + env(safe-area-inset-top, 0px)) 22px 30px; overflow-y: auto; font-size: 14px; transform: translateX(105%); visibility: hidden; transition: transform .22s ease, visibility 0s linear .22s; }
+.lab-coach.open { transform: none; visibility: visible; transition: transform .22s ease; }
+.coach-x { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 14px; }
+.coach-tab { position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 55; writing-mode: vertical-rl; border: 1px solid var(--ink); border-right: 0; background: var(--ink); color: var(--paper); padding: 14px 8px; font-weight: 600; font-size: 13px; letter-spacing: .04em; cursor: pointer; }
+.coach-tab:hover { background: var(--cobalt); border-color: var(--cobalt); }
+.coach-tab[aria-expanded="true"] { display: none; }
+@media (prefers-reduced-motion: reduce) { .lab-coach, .lab-coach.open { transition: none; } }
 .lab-lib h3, .lab-coach h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 500; margin: 0 0 8px; }
 .lab-lib select { width: 100%; margin-bottom: 12px; }
 .plist { list-style: none; margin: 0; padding: 0; max-height: 64vh; overflow: auto; }
@@ -569,7 +599,7 @@ details.rv-psg .psg { position: static; max-height: 360px; margin-top: 8px; }
   .lab-lib { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px 0; }
   .plist { max-height: 240px; }
   .lab-main { padding: 18px 0 30px; }
-  .lab-coach { border-left: 0; border-top: 1px solid var(--line); padding: 16px 0; }
+  .coach-tab { top: auto; bottom: 90px; transform: none; padding: 12px 7px; }
 }
 @media (max-width: 980px) { .psplit { grid-template-columns: minmax(0, 1fr); gap: 16px; } .psg { position: static; max-height: 46vh; } }
 @media (max-width: 860px) {
@@ -17734,7 +17764,7 @@ const PLT_SOON = [
 ];
 /* Signed-out visitors can't reach the site's saved data, so their access is checked in the page itself:
    each person's code is made from their email, SITE_KEY and the current month (Korea time), so codes change on the 1st of every month. */
-const SITE_KEY = 'pp-0da28cd0a82cbf36cb8df9c60ae6c4b0', BRAND = 'Chalk & Margin';
+const SITE_KEY = 'pp-0da28cd0a82cbf36cb8df9c60ae6c4b0', BRAND = 'Comma';
 const EMBED_REVOKED = [];
 let ACCT_EMAIL = null, GUEST = false, ROOM = null, ROOM_P = null, LIVE = [];
 /* live presence: each open page says only whether it is browsing or in a test; only the owner's page counts and shows it */
@@ -17748,7 +17778,7 @@ function liveStart() {
 const liveCount = () => { const seen = new Set(); LIVE.forEach(p => seen.add(p.by || p.peer)); return seen.size; };
 function liveRender() {
   const n = liveCount(), pill = document.getElementById('livePill');
-  if (pill) { pill.classList.toggle('zero', !n); pill.lastChild.textContent = ` ${n} online`; }
+  if (pill) { pill.classList.toggle('zero', !n); pill.lastChild.textContent = ` ${n}`; pill.title = `${n} online now (only you can see this)`; }
   const box = document.getElementById('liveBox'); if (box) box.innerHTML = liveBoxHTML();
   if (LIVE.some(p => (p.presence || {}).a && !Object.values(LIVE_TAGS).includes(p.presence.a)) && ADM.codes.some(c => c.email && !LIVE_TAGS[c.email])) liveTagMap().then(() => { const b = document.getElementById('liveBox'); if (b) b.innerHTML = liveBoxHTML(); });
   const ids = [...new Set(LIVE.map(p => p.by).filter(id => id && !ADM.names[id]))];
@@ -17948,13 +17978,14 @@ function navKey(active) {
   if (active === 'support') return 'about';
   return active;
 }
+const initials = n => { const w = String(n || '').replace(/@.*/, '').replace(/[^\p{L}\p{N}\s]/gu, ' ').trim().split(/\s+/).filter(Boolean); const t = w.length > 1 ? w[0][0] + w[1][0] : (w[0] || '?').slice(0, 2); return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase(); };
 function nav(active) {
   const cur = navKey(active);
-  return (PERSIST ? '' : `<div class="memnote" role="status">This browser view is blocking saved data, so your scores last only until you close this page. To keep your progress, open the page in a regular (not private) browser window.</div>`) + `<header class="nav"><div class="nav-in"><a class="brand" href="#home" aria-label="${BRAND} home">Chalk<em>&amp;</em>Margin</a>
-    <nav class="tabs-nav" aria-label="Main">${NAV_ITEMS.map(([k, l]) => `<a href="#${k}" ${cur === k ? 'aria-current="page"' : ''}>${l}</a>`).join('')}${MODE === 'owner' ? `<a href="#admin" ${cur === 'admin' ? 'aria-current="page"' : ''}>Admin</a>` : ''}</nav><span class="spacer"></span>
-    <div class="nav-side">${MODE === 'owner' && ROOM ? `<a class="live-pill ${liveCount() ? '' : 'zero'}" id="livePill" href="#admin" title="People on the site right now (only you can see this)"><i></i> ${liveCount()} online</a>` : ''}
-    ${MODE === 'owner' || MODE === 'member' ? '<button class="nav-fb" id="fbBtn" title="Report a problem or send a suggestion">Feedback</button>' : ''}
-    ${me() ? `<button class="who" id="whoBtn" aria-label="Profile: ${esc(me().name)}"><span class="av">${esc(me().name.charAt(0).toUpperCase())}</span><span class="who-name">${esc(me().name)}</span></button>` : ''}</div></div></header>`;
+  return (PERSIST ? '' : `<div class="memnote" role="status">This browser view is blocking saved data, so your scores last only until you close this page. To keep your progress, open the page in a regular (not private) browser window.</div>`) + `<header class="nav"><div class="nav-in"><a class="brand" href="#home" aria-label="${BRAND} home">Comma<em>,</em></a>
+    <nav class="tabs-nav" aria-label="Main">${NAV_ITEMS.map(([k, l]) => `<a href="#${k}" ${cur === k ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav><span class="spacer"></span>
+    <div class="nav-side">${MODE === 'owner' ? `<a class="nav-adm" href="#admin" ${cur === 'admin' ? 'aria-current="page"' : ''}>Admin</a>` : ''}${MODE === 'owner' && ROOM ? `<a class="live-pill ${liveCount() ? '' : 'zero'}" id="livePill" href="#admin" title="People on the site right now (only you can see this)"><i></i> ${liveCount()}</a>` : ''}
+    ${MODE === 'owner' || MODE === 'member' ? '<button class="nav-fb" id="fbBtn" title="Report a problem or send a suggestion" aria-label="Feedback">?</button>' : ''}
+    ${me() ? `<button class="who" id="whoBtn" aria-label="Profile: ${esc(me().name)}" title="${esc(me().name)}"><span class="av">${esc(initials(me().name))}</span></button>` : ''}</div></div></header>`;
 }
 function testSummary(x) {
   const hist = LS.get(KEY(x).hist, []); const fulls = hist.filter(h => h.mode === 'full' && !h.practice);
@@ -17965,10 +17996,10 @@ function spark(vals) {
   const W = 200, H = 36, x = i => 4 + (W - 8) * i / (vals.length - 1), y = v => 4 + (H - 8) * (1 - v / 100);
   return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${vals.map((v, i) => (i ? 'L' : 'M') + x(i) + ',' + y(v)).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="${x(vals.length - 1)}" cy="${y(vals[vals.length - 1])}" r="3" fill="var(--accent)"/></svg>`;
 }
-const DISCLAIMER = 'Chalk & Margin is an independent study resource. It is not affiliated with, endorsed by, or sponsored by ETS or any testing organization. Praxis® is a registered trademark of ETS, used here only to identify the tests these materials help you prepare for. All questions, explanations, flashcards, and writing prompts are original.';
+const DISCLAIMER = 'Comma is an independent study resource, not affiliated with or endorsed by ETS. Praxis® is a trademark of ETS. All content here is original.';
 function foot() {
-  return `<footer class="foot"><div><p>${esc(DISCLAIMER)}</p><p>Scores on this site are practice estimates (raw percentages), not official or scaled scores. © ${new Date().getFullYear()} ${BRAND}. For personal study; please don't copy or redistribute.</p></div>
-    <nav aria-label="Footer"><a href="#practice">Practice</a><a href="#simulate">Exam Simulation</a><a href="#lab">Response Lab</a><a href="#review">Quick Review</a><a href="#about">About &amp; contact</a><a href="#about-give">Make a donation</a></nav></footer>`;
+  return `<footer class="foot"><div><p>${esc(DISCLAIMER)}</p><p>Scores are practice estimates, not official scores. © ${new Date().getFullYear()} ${BRAND}.</p></div>
+    <nav aria-label="Footer"><a href="#about">Contact</a><a href="#about-give">Donate</a></nav></footer>`;
 }
 function bindNav() { const b = $('#whoBtn'); if (b) b.onclick = openProfileMenu; const f = $('#fbBtn'); if (f) f.onclick = () => openReport(null); }
 
@@ -17982,7 +18013,7 @@ function renderProfiles(errMsg) {
   const list = profiles(); const legacy = !list.length && hasLegacy();
   $('#hub').innerHTML = nav('profiles') + `<div class="page" style="max-width:760px">
     <div class="eyebrow">${BRAND}</div><h1 class="display">${list.length ? "Who's practicing?" : 'Create your profile'}</h1>
-    <p class="lead">Each profile keeps its own test history, scores, and progress through the question pool. Profiles are saved in this browser, so everyone using this computer can have their own.</p>
+    <p class="lead">Each profile keeps its own scores in this browser.</p>
     ${list.length ? `<div class="pgrid">${list.map(p => { const st = profileStats(p.id); return `<button class="pcard" data-pid="${p.id}"><span class="av">${esc(p.name.charAt(0).toUpperCase())}</span><span><b>${esc(p.name)}</b><small>${st.n} attempt${st.n === 1 ? '' : 's'}${st.last ? ' · last ' + fmtDate(st.last) : ''}</small></span></button>`; }).join('')}</div>` : ''}
     <section class="panel"><h2>${list.length ? 'Add a profile' : 'Your username'}</h2>
       <form id="newProf" class="field" autocomplete="off"><input id="newName" maxlength="24" placeholder="Username, e.g. Isaac" aria-label="Username"><button class="btn primary" type="submit">${list.length ? 'Add profile' : 'Create profile'}</button></form>
@@ -18055,12 +18086,17 @@ function resetAll() {
   const m = me();
   confirmBox('Reset all your tests?', `This clears every attempt, score, in-progress test, and question history for ${m.name} in all subjects, so you start fresh. It cannot be undone.`, 'Reset all tests', () => { wipeProfileData(PID); syncProgress(); go('home'); });
 }
-/* the subject shelf: every area (and the PLT group) as a book-index column */
+/* subjects: area drop-downs, each test a drop-down with its start buttons */
 const GROUPS = () => AREAS.map(a => ({ k: a.k, name: a.name, accent: a.accent, tests: testsIn(a.k) })).concat([{ k: 'plt', name: 'Principles of Learning & Teaching', accent: 'plt', tests: testsIn('plt') }]);
-function shelfHTML(pref) {
-  return `<div class="shelf">${GROUPS().map(g => `<div class="shelf-group acc-${g.accent}"><h3>${esc(g.name)}<small>${g.tests.length ? g.tests.length + (g.tests.length > 1 ? ' tests' : ' test') : 'soon'}</small></h3>
-    <ul class="idx">${g.tests.length ? g.tests.map(x => { const t = testSummary(x); return `<li><a href="#${x.id}" data-pref="${pref || ''}"><span class="t">${esc(x.subject)}</span><span class="lead-dots"></span>${t.cur ? '<span class="st">in progress</span>' : t.last ? `<span class="st">${t.last.pct}%</span>` : ''}<span class="cd">${x.code}</span></a></li>`; }).join('')
-      : '<li class="soon">World-language tests are planned.</li>'}</ul></div>`).join('')}</div>`;
+function subjAcc(pref) {
+  return `<div class="acc">${GROUPS().map(g => `<details class="acc-area acc-${g.accent}"><summary><span class="nm">${esc(g.name)}</span><small>${g.tests.length ? g.tests.length + (g.tests.length > 1 ? ' tests' : ' test') : 'coming soon'}</small></summary>
+    <div class="acc-tests">${g.tests.length ? g.tests.map(x => { const t = testSummary(x); return `<details class="acc-test"><summary><span class="cd">${x.code}</span><span class="t">${esc(x.subject)}</span>${t.cur ? '<span class="st">in progress</span>' : t.last ? `<span class="st">${t.last.pct}%</span>` : ''}</summary>
+      <div class="acc-go"><button class="btn ${pref === 'simulate' ? 'quiet' : 'primary'}" data-qp="${x.id}">Practice · 20 questions</button><button class="btn ${pref === 'simulate' ? 'primary' : 'quiet'}" data-qs="${x.id}">Exam simulation · ${fmtHM(x.minutes)} h</button><a class="linkbtn" href="#${x.id}" data-pref="${pref || 'practice'}">More options${t.cur ? ' · resume' : ''}</a></div></details>`; }).join('')
+      : '<p class="small muted" style="margin:8px 0">World-language tests are planned.</p>'}</div></details>`).join('')}</div>`;
+}
+function bindAcc() {
+  $$('[data-qp]').forEach(b => b.onclick = () => { PREF_MODE = 'practice'; startTest(BY_ID[b.dataset.qp], 'drill', 'mix', getLevel(), true); });
+  $$('[data-qs]').forEach(b => b.onclick = () => { PREF_MODE = 'simulate'; startTest(BY_ID[b.dataset.qs], 'full', null, getLevel()); });
 }
 function renderHome() {
   setAccent(null); show('hub');
@@ -18070,17 +18106,16 @@ function renderHome() {
   $('#hub').innerHTML = nav('home') + `<div class="page">
     <section class="hero2">
       <div>
-        <div class="eyebrow">Free study resource · teacher certification</div>
+        <div class="eyebrow">Free teacher-certification practice</div>
         <h1 class="display">Practice that <span class="mark-u">teaches back</span>.</h1>
-        <p class="lead">Original practice questions, written-response coaching, and quick-review sheets for teacher-certification tests in science, math, social studies, English, physical education, and the principles of teaching. Check each answer as you go, or sit a timed simulation when you're ready.</p>
         <ul class="tools">
-          <li><a href="#practice"><b>Practice</b><span>One question at a time. See right away whether you're correct, and why.</span><i>→</i></a></li>
-          <li><a href="#simulate"><b>Exam simulation</b><span>Full length and timed. Mark, review, submit, then read every explanation.</span><i>→</i></a></li>
-          <li><a href="#lab"><b>Written Response Lab</b><span>Answer a teaching scenario or text prompt and get rubric-based feedback.</span><i>→</i></a></li>
-          <li><a href="#review"><b>Quick Review</b><span>Flashcards and memorization sheets for each subject.</span><i>→</i></a></li>
+          <li><a href="#practice"><b>Practice</b><span>Instant feedback on every question</span><i>→</i></a></li>
+          <li><a href="#simulate"><b>Exam simulation</b><span>Full length and timed</span><i>→</i></a></li>
+          <li><a href="#lab"><b>Response Lab</b><span>Feedback on your written answers</span><i>→</i></a></li>
+          <li><a href="#review"><b>Quick Review</b><span>Flashcards and formula sheets</span><i>→</i></a></li>
         </ul>
       </div>
-      <div class="specimen" aria-label="Example: how a practice question is annotated">
+      <div class="specimen" aria-label="Example: how a practice question is explained">
         <figure>
           <p class="sp-stem">A ninth grader stops participating after a low quiz score. Which response would most likely rebuild the student's motivation?</p>
           <ul class="sp-ch">
@@ -18090,71 +18125,55 @@ function renderHome() {
             <li><span class="l">D</span><span>Remind the class that quiz grades affect report cards</span></li>
           </ul>
           <div class="sp-notes">
-            <div><span class="k">B</span><span class="note">The best answer: it rebuilds self-efficacy by showing a path to success.</span></div>
-            <div><span class="k">A</span><span class="note">Tempting. It may raise participation for a while, but it doesn't address the cause.</span></div>
+            <div><span class="k">B</span><span class="note">Best answer: it shows a path to success.</span></div>
+            <div><span class="k">A</span><span class="note">Tempting, but it doesn't address the cause.</span></div>
           </div>
           <figcaption>Fig. 1 · Every answer comes with the reasoning</figcaption>
         </figure>
+        <a class="give-tag" href="#about-give"><span class="hrt" aria-hidden="true">♥</span> Comma is free. <u>Donations</u> keep it that way.</a>
       </div>
     </section>
     ${all.length || inProg.length ? `<div class="progress-strip" aria-label="Your progress">
-      <div><span class="n">${all.length}</span><small>attempts</small></div><div><span class="n">${totalQ.toLocaleString('en-US')}</span><small>questions answered</small></div>
+      <div><span class="n">${all.length}</span><small>attempts</small></div><div><span class="n">${totalQ.toLocaleString('en-US')}</span><small>questions</small></div>
       ${inProg.length ? `<a class="btn primary" href="#${inProg[0].x.id}">Continue ${esc(inProg[0].x.subject)}</a>` : ''}
-      <span style="flex:1"></span><button class="linkbtn sm" id="resetPickBtn">Reset selected tests</button><button class="linkbtn sm" id="resetAllBtn">Reset all my tests</button>${MODE === 'owner' ? '<button class="linkbtn sm" id="switchBtn">Switch profile</button>' : ''}</div>` : ''}
-    <section class="sec"><div class="margin"><b>The shelf</b>Choose a test<p>Each test opens with both modes: practice or a timed simulation.</p></div>
-      <div class="sec-body">${shelfHTML('')}</div></section>
-    <section class="sec"><div class="margin"><b>Method</b>How to use it<p>A simple loop: review, practice, then prove it under time.</p></div>
-      <div class="sec-body"><div class="cycle">
-        <div><span class="num">1</span><h4>Review</h4><p>Skim the flashcards and memorization sheets for your subject in Quick Review.</p></div>
-        <div><span class="num">2</span><h4>Practice</h4><p>Work short sets with instant feedback. Every miss shows the correct answer and why.</p></div>
-        <div><span class="num">3</span><h4>Simulate</h4><p>Sit a full timed test, then study the explanations and your weakest category.</p></div>
-      </div><p class="small muted" style="margin:14px 0 0">Tests with written responses: rehearse them in the <a href="#lab">Written Response Lab</a>, where you get feedback against a rubric.</p></div></section>
-    ${all.length ? `<section class="sec"><div class="margin"><b>Log</b>Recent activity</div><div class="sec-body"><table class="recent"><tbody>${all.slice(0, 6).map(h => `<tr class="acc-${h.x.accent}"><td><span class="dot"></span>${esc(h.x.subject)} · ${h.practice ? 'practice' : h.mode === 'full' ? 'simulation' : 'timed drill'}</td><td class="mono"><b>${h.pct}%</b></td><td class="muted small">${fmtDate(h.date)}</td></tr>`).join('')}</tbody></table></div></section>` : ''}
-    <section class="give" aria-label="Donations"><div><h3>Keep it free</h3><p>No ads, no paywall. If these materials help you prepare, a donation of any amount keeps new tests and features coming.</p></div><a class="btn big" href="#about-give">Make a donation</a></section>
+      <span style="flex:1"></span><button class="linkbtn sm" id="resetPickBtn">Reset tests</button><button class="linkbtn sm" id="resetAllBtn">Reset all</button>${MODE === 'owner' ? '<button class="linkbtn sm" id="switchBtn">Switch profile</button>' : ''}</div>` : ''}
+    <section class="sec"><div class="margin"><b>Subjects</b>Choose a test</div><div class="sec-body">${subjAcc('')}</div></section>
+    ${all.length ? `<section class="sec"><div class="margin"><b>Recent</b></div><div class="sec-body"><table class="recent"><tbody>${all.slice(0, 5).map(h => `<tr class="acc-${h.x.accent}"><td><span class="dot"></span>${esc(h.x.subject)} · ${h.practice ? 'practice' : h.mode === 'full' ? 'simulation' : 'timed drill'}</td><td class="mono"><b>${h.pct}%</b></td><td class="muted small">${fmtDate(h.date)}</td></tr>`).join('')}</tbody></table></div></section>` : ''}
     ${foot()}
   </div>`;
+  bindAcc();
   if ($('#resetAllBtn')) $('#resetAllBtn').onclick = resetAll; if ($('#resetPickBtn')) $('#resetPickBtn').onclick = resetPick; if ($('#switchBtn')) $('#switchBtn').onclick = () => go('profiles');
 }
 const MODE_COPY = {
-  practice: { eyebrow: 'Learn as you go', title: 'Practice with <em>instant feedback</em>', lead: 'Short sets or full-length sets, untimed. After each question you check your answer and read why the correct answer is right.',
-    facts: ['One question at a time, with a Check answer step', 'Correct answer and explanation right away', 'Running score while you work', 'End-of-set summary of strengths and weak areas'], btn: 'Open practice' },
-  simulate: { eyebrow: 'Real conditions', title: 'Exam <em>simulation</em>', lead: 'Full-length, timed tests built to each test\'s published blueprint. No answers until you submit, just like test day.',
-    facts: ['Countdown timer and progress bar', 'Mark questions and use the review screen', 'Answers and explanations only after you submit', 'Score breakdown by content category'], btn: 'Open simulation' },
+  practice: { eyebrow: 'Practice', title: 'Learn as <em>you go</em>', lead: 'Untimed. Check each answer and see the explanation right away.' },
+  simulate: { eyebrow: 'Exam simulation', title: 'Real <em>test conditions</em>', lead: 'Full length and timed. Answers appear after you submit.' },
 };
 function renderCatalog(kind) {
   setAccent(null); show('hub'); PREF_MODE = kind; const C = MODE_COPY[kind];
   $('#hub').innerHTML = nav(kind) + `<div class="page">
-    <div class="mode-head"><div><div class="eyebrow">${C.eyebrow}</div><h1 class="display">${C.title}</h1><p class="lead">${C.lead}</p></div>
-      <ul class="facts">${C.facts.map(f => `<li><span>${f}</span></li>`).join('')}</ul></div>
-    ${GROUPS().map(g => `<section class="sec acc-${g.accent}"><div class="margin"><b>${esc(g.name)}</b>${g.tests.length} ${g.tests.length === 1 ? 'test' : 'tests'}</div><div class="sec-body">
-      ${g.tests.length ? `<ul class="tlist">${g.tests.map(x => { const t = testSummary(x); return `<li><span class="cd">${x.code}</span><span class="nm"><b>${esc(x.subject)}</b><small>${x.nSR} questions${x.cr ? ' + written responses' : ''} · ${fmtHM(x.minutes)} h on test day${t.last ? ` · last ${t.last.pct}%` : ''}</small></span><a class="btn ${t.cur ? 'primary' : 'quiet'}" href="#${x.id}" data-pref="${kind}">${t.cur ? 'Continue' : C.btn}</a></li>`; }).join('')}</ul>`
-        : '<p class="empty">World-language tests are planned.</p>'}</div></section>`).join('')}
+    <div class="eyebrow">${C.eyebrow}</div><h1 class="display" style="margin-bottom:6px">${C.title}</h1><p class="lead">${C.lead}</p>
+    <div style="margin-top:22px">${subjAcc(kind)}</div>
     ${foot()}
   </div>`;
+  bindAcc();
 }
 function renderAbout() {
   setAccent(null); show('hub');
   $('#hub').innerHTML = nav('about') + `<div class="page">
-    <div class="eyebrow">About</div><h1 class="display">A free, independent <em>study desk</em> for future teachers.</h1>
+    <div class="eyebrow">About</div><h1 class="display">Free practice for <em>future teachers</em>.</h1>
     <div class="about-grid" style="margin-top:22px">
       <div>
-        <h3>What this is</h3>
-        <p>${BRAND} offers practice questions, timed simulations, written-response coaching, and quick-review sheets for teacher-certification tests. Everything is free to use.</p>
-        <h3 style="margin-top:22px">How the materials are made</h3>
-        <p>Every question, explanation, flashcard, case study, and writing prompt on this site is original. The tests follow the publicly available content outlines (topics, number of questions, and time limits) so practice feels realistic, but no official test items, prep-book content, or proprietary materials are reproduced. Reading passages are either written for this site or come from works in the public domain.</p>
-        <h3 style="margin-top:22px">Independence and trademarks</h3>
-        <p class="legal">${esc(DISCLAIMER)} Automated feedback in the Written Response Lab is an estimate to guide revision, not an official score, and no particular wording guarantees a passing score.</p>
+        <p>Every question, flashcard, and writing prompt on ${BRAND} is original. Tests follow the public content outlines so practice feels realistic.</p>
+        <p class="legal">${esc(DISCLAIMER)} Written-response feedback is an estimate, not an official score.</p>
       </div>
       <div>
         <h3>Contact</h3>
-        <p>Questions, corrections, or suggestions:</p>
-        <div class="copyline"><span class="addr" id="aboutMail">${OWNER_EMAIL}</span><button class="btn quiet" id="copyMail">Copy email</button><span class="copied" id="copyMsg" aria-live="polite"></span></div>
-        <h3 style="margin-top:28px" id="about-give">Make a donation</h3>
-        <p>Card donations are processed securely by Stripe. You choose the amount on the next page.</p>
-        <p class="notice"><b>Note:</b> tax will be added to the amount you donate.</p>
+        <div class="copyline"><span class="addr" id="aboutMail">${OWNER_EMAIL}</span><button class="btn quiet" id="copyMail">Copy</button><span class="copied" id="copyMsg" aria-live="polite"></span></div>
+        <h3 style="margin-top:28px" id="about-give">Donate</h3>
+        <p>Card donations go through Stripe. Tax is added to the amount.</p>
         <div class="row" style="margin:12px 0"><a class="btn primary big" href="${STRIPE_LINK}" target="_blank" rel="noopener noreferrer">Donate by card</a></div>
-        <p class="small muted">If the button doesn't open, copy this link into your browser:</p><div class="linkline">${STRIPE_LINK}</div>
-        <p style="margin-top:18px"><b>Donating in Korean won (KRW)?</b> Email ${OWNER_EMAIL} and you'll get a reply with how to donate.</p>
+        <p class="small muted">Link not opening? Copy it: <span class="linkline">${STRIPE_LINK}</span></p>
+        <p class="small muted">Donating in KRW? Email ${OWNER_EMAIL}.</p>
       </div>
     </div>
     ${foot()}
@@ -18197,40 +18216,40 @@ function renderTestPage(x) {
   $('#hub').innerHTML = nav(x.id) + `<div class="page">
     <div class="crumb"><a href="#${PREF_MODE === 'simulate' ? 'simulate' : 'practice'}">${PREF_MODE === 'simulate' ? 'Exam Simulation' : 'Practice'}</a> / ${esc(crumbArea)} / ${esc(x.subject)}</div>
     <section class="t-head">
-      <div><div class="eyebrow">Test code ${x.code} · prepares you for the Praxis® ${esc(x.subject)} test</div>
+      <div><div class="eyebrow">Test ${x.code}</div>
         <h1 class="display">${esc(x.subject)}</h1>
-        <p class="lead" style="margin-bottom:0">${esc(x.blurb)}</p></div>
-      <div class="specs"><div><b>${x.nSR}</b><small>questions${x.cr ? ` + ${x.crCat.n} written` : ''}</small></div><div><b>${fmtHM(x.minutes)}</b><small>hours on test day</small></div><div><b>${srCats.length}</b><small>content categories</small></div><div><b>${x.tools.length ? 'Yes' : 'None'}</b><small>${esc(x.helpNote)}</small></div></div>
+</div>
+      <div class="specs"><div><b>${x.nSR}</b><small>questions${x.cr ? ` + ${x.crCat.n} written` : ''}</small></div><div><b>${fmtHM(x.minutes)}</b><small>hours</small></div><div><b>${srCats.length}</b><small>categories</small></div></div>
     </section>
     ${resume}
     <div class="row" style="margin:20px 0 4px"><span class="small" style="font-weight:600">Difficulty</span>
       <div class="seg" role="radiogroup" aria-label="Difficulty">${Object.entries(LEVEL).map(([lk, v]) => `<label><input type="radio" name="lvl" id="lvl-${lk}" value="${lk}" ${getLevel() === lk ? 'checked' : ''}><span>${v.name}</span></label>`).join('')}</div>
-      ${x.tools.length ? '<button class="btn quiet" id="openHelp">Open the reference tools</button>' : ''}</div>
-    <p class="lvl-note" id="lvlNote">${LEVEL[getLevel()].note}</p>
+      ${x.tools.length ? '<button class="btn quiet" id="openHelp">Reference tools</button>' : ''}</div>
+    
     <section class="modes" style="margin-top:18px">
       <div class="mode ${PREF_MODE !== 'simulate' ? 'pre' : ''}"><span class="tag-m">Learn as you go</span><h3>Practice</h3>
-        <p>Untimed. After each question, check your answer to see whether you're right, the correct answer, and the explanation. Your score updates as you go.</p>
+        <p>Untimed, with instant feedback.</p>
         <div class="opts"><div class="opt"><select id="pCat" aria-label="Practice topic"><option value="mix">Mixed topics</option>${srCats.map(c => `<option value="${c.k}" ${hasStats && c.k === weakest ? 'selected' : ''}>${c.k}. ${esc(c.short)}${hasStats && c.k === weakest ? ' (weakest)' : ''}</option>`).join('')}</select><button class="btn primary" id="startPSet">Start 20-question set</button></div>
-          <div class="opt"><button class="btn quiet" id="startPFull">Full-length practice set · ${x.nSR} questions</button></div></div></div>
+          <div class="opt"><button class="btn quiet" id="startPFull">Full length · ${x.nSR} questions</button></div></div></div>
       <div class="mode ${PREF_MODE === 'simulate' ? 'pre' : ''}"><span class="tag-m">Real conditions</span><h3>Exam simulation</h3>
-        <p>${x.nSR} questions${x.cr ? ` and ${x.crCat.n} written responses` : ''} in ${fmtHM(x.minutes)} hours, timed. Mark questions and use the review screen; answers and explanations appear only after you submit.</p>
+        <p>Timed. Answers after you submit.</p>
         <div class="opts"><div class="opt"><button class="btn primary" id="startFull">Start full simulation</button></div>
           <div class="opt"><select id="drillCat" aria-label="Timed drill category">${x.cats.map(c => `<option value="${c.k}" ${c.k === weakest ? 'selected' : ''}>${c.k}. ${esc(c.short)}</option>`).join('')}</select><button class="btn quiet" id="startDrill">${drillLabel(weakest)}</button></div></div></div>
     </section>
     <section class="stats3">
-      <div><h2 class="sec-h">${hasStats ? 'Your accuracy by category · last 5 attempts' : 'Blueprint · questions per category'}</h2><ul class="blueprint">${bp}</ul></div>
-      <div><h2 class="sec-h">Simulation score trend</h2><div class="trend">${fulls.length >= 2 ? trendSVG(fulls) : `<p class="empty">Take two full simulations to see your trend line.${fulls.length === 1 ? ` First score: ${fulls[0].pct}%.` : ''}</p>`}</div>
+      <div><h2 class="sec-h">${hasStats ? 'Your accuracy · last 5' : 'Questions per category'}</h2><ul class="blueprint">${bp}</ul></div>
+      <div><h2 class="sec-h">Score trend</h2><div class="trend">${fulls.length >= 2 ? trendSVG(fulls) : `<p class="empty">Appears after two simulations.${fulls.length === 1 ? ` First: ${fulls[0].pct}%.` : ''}</p>`}</div>
         <h2 class="sec-h" style="margin-top:22px">Question pool</h2>
-        <p class="small" style="margin:0 0 8px">${x.bank.length} original questions${nGen ? ` plus ${nGen} problem generators that create new versions every time` : ''}${nCases ? `, plus ${nCases} ${x.cr.kind === 'plt' ? 'case studies' : 'writing tasks'} for the written responses` : ''}. You've seen ${nSeen}.</p>
+        <p class="small" style="margin:0 0 8px">${nSeen} of ${x.bank.length} seen${nGen ? ` · ${nGen} generators` : ''}</p>
         <div class="bar"><i style="width:${(nSeen / x.bank.length * 100).toFixed(1)}%"></i></div></div>
     </section>
     <section style="margin-top:30px"><h2 class="sec-h">Attempt history</h2>
-      ${hist.length ? `<div class="tablewrap"><table class="hist"><thead><tr><th>Date</th><th>Mode</th><th>Score</th><th>Time</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="empty">No attempts yet. Scores, category breakdowns, and answer reviews will be kept here.</p>`}
-      <div class="row" style="margin-top:12px"><a href="${x.ets}" target="_blank" rel="noopener" class="small">Official test information (opens the test maker's site)</a>${hist.length || Object.keys(seen).length ? '<span style="flex:1"></span><button class="linkbtn sm" id="resetBtn">Clear history for this test</button>' : ''}</div>
+      ${hist.length ? `<div class="tablewrap"><table class="hist"><thead><tr><th>Date</th><th>Mode</th><th>Score</th><th>Time</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="empty">No attempts yet.</p>`}
+      <div class="row" style="margin-top:12px"><a href="${x.ets}" target="_blank" rel="noopener" class="small">Official test info</a>${hist.length || Object.keys(seen).length ? '<span style="flex:1"></span><button class="linkbtn sm" id="resetBtn">Clear history for this test</button>' : ''}</div>
     </section>
     ${foot()}
   </div>`;
-  $$('[name="lvl"]').forEach(r => r.onchange = () => { LS.set(`pp.${PID}.level`, r.value); $('#lvlNote').textContent = LEVEL[r.value].note; });
+  $$('[name="lvl"]').forEach(r => r.onchange = () => { LS.set(`pp.${PID}.level`, r.value); });
   $('#startPSet').onclick = () => startTest(x, 'drill', $('#pCat').value, getLevel(), true);
   $('#startPFull').onclick = () => startTest(x, 'full', null, getLevel(), true);
   $('#startFull').onclick = () => startTest(x, 'full', null, getLevel());
@@ -18405,7 +18424,7 @@ function renderLab() {
   const draft = cur ? LS.get(labDraftKey(cur.p.id), '') : '';
   $('#hub').innerHTML = nav('lab') + `<div class="page">
     <div class="eyebrow">Written Response Lab</div><h1 class="display" style="margin-bottom:6px">Write it, <em>then sharpen it</em>.</h1>
-    <p class="lead">Pick a prompt, read the materials, and draft your answer. Get feedback against a rubric right away, then revise. Drafts are saved in this browser.</p>
+    <p class="lead">Pick a prompt, write your answer, get feedback.</p>
     <div class="lab">
       <aside class="lab-lib"><h3>Prompt library</h3>
         <select id="labBand" aria-label="Prompt type">${LAB_GROUPS.map(([b, l]) => `<option value="${b}" ${b === LAB.band ? 'selected' : ''}>${l} (${labItems(b).length})</option>`).join('')}</select>
@@ -18415,11 +18434,12 @@ function renderLab() {
         ${caseBox(q, 'lab', false)}
         <label class="crlab" for="labIn">Your response</label>
         <textarea id="labIn" class="crin" spellcheck="true" placeholder="Start with the issue, name your choice, explain why it works, and point to the evidence.">${esc(draft)}</textarea>
-        <div class="crfoot"><span id="labSaved">Draft saved in this browser</span><span id="labWc">0 words</span></div>
+        <div class="crfoot"><span id="labSaved">Draft saved</span><span id="labWc">0 words</span></div>
         <div class="lab-actions"><button class="btn primary" id="labGrade">Get feedback</button>${SAMPLE ? '<button class="btn" id="labAI">Ask the AI coach</button>' : ''}<button class="btn quiet" id="labClear">Clear draft</button></div>
-        ${SAMPLE ? '' : '<p class="small muted" style="margin:10px 0 0">Instant feedback runs in your browser. A more detailed AI coach is available when the site is opened through Claude while signed in.</p>'}
+        
         <div id="labReport"></div>` : '<p class="empty">No prompts in this group yet.</p>'}</div>
-      <aside class="lab-coach"><h3>Coach notes</h3>
+      <button class="coach-tab" id="coachTab" aria-controls="coach" aria-expanded="${!!LAB.coach}">Coach notes</button>
+      <aside class="lab-coach ${LAB.coach ? 'open' : ''}" id="coach" aria-label="Coach notes"><button class="btn quiet coach-x" id="coachX">Close</button><h3>Coach notes</h3>
         ${guide.intro ? `<p style="margin:0 0 10px">${esc(guide.intro)}</p>` : ''}
         <details open><summary>A structure that works</summary><ol>${(guide.structure || []).map(s => `<li><b>${esc(s.step)}.</b> ${esc(s.detail)}</li>`).join('')}</ol></details>
         <details><summary>Sentence frames (click to insert)</summary>${(guide.frames || []).map((f, i) => `<button class="frame-btn" data-frame="${i}">${esc(f)}</button>`).join('')}</details>
@@ -18431,6 +18451,9 @@ function renderLab() {
     </div>
     ${foot()}
   </div>`;
+  const coach = open => { LAB.coach = open; $('#coach').classList.toggle('open', open); $('#coachTab').setAttribute('aria-expanded', open); if (open) $('#coachX').focus(); else $('#coachTab').focus(); };
+  $('#coachTab').onclick = () => coach(true); $('#coachX').onclick = () => coach(false);
+  LAB.closeCoach = () => { if (LAB.coach) coach(false); };
   $('#labBand').onchange = () => { LAB.band = $('#labBand').value; LS.set('pp.ui.lab.band', LAB.band); LAB.sel = null; renderLab(); bindNav(); };
   $$('[data-lab]').forEach(b => b.onclick = () => { LAB.sel = b.dataset.lab; LAB.report = null; LAB.ai = null; LAB.showModel = false; renderLab(); bindNav(); });
   if (!cur) return;
@@ -18464,7 +18487,7 @@ function renderReview() {
   const firstTest = BY_ID[d.tests[0]];
   $('#hub').innerHTML = nav('review') + `<div class="page">
     <div class="eyebrow">Quick Review</div><h1 class="display" style="margin-bottom:6px">The <em>essentials</em>, at a glance.</h1>
-    <p class="lead">Flashcards for key terms, distinctions, and common misconceptions, plus memorization sheets with the formulas, values, and rules worth knowing cold.</p>
+    <p class="lead">Flashcards and formula sheets for each subject.</p>
     <div class="qr">
       <nav aria-label="Subjects"><ul class="decklist">${deckOrder().map(k => `<li><button data-deck="${k.id}" aria-current="${k.id === d.id}">${esc(k.title)}<small>${k.cards.length}</small></button></li>`).join('')}</ul></nav>
       <div class="${firstTest ? 'acc-' + firstTest.accent : ''}" style="min-width:0">
@@ -18495,6 +18518,7 @@ function renderReview() {
   $('#rvGot').onclick = () => { RV.known.add(d.id + ':' + ci); move(1); };
   $('#rvAgain').onclick = () => { RV.order.push(ci); move(1); };
 }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && ROUTE === 'lab' && LAB.closeCoach && !$('#modal-root').innerHTML) LAB.closeCoach(); });
 document.addEventListener('keydown', e => {
   if (ROUTE !== 'review' || RV.tab !== 'cards' || inExam || $('#modal-root').innerHTML || /^(SELECT|INPUT|TEXTAREA|BUTTON)$/.test(e.target.tagName)) return;
   if (e.key === 'ArrowRight' && $('#rvNext')) { e.preventDefault(); $('#rvNext').click(); }
@@ -18599,7 +18623,7 @@ function pracBody(q, sel, n) {
   const fb = ck ? `<div class="fb ${ok ? '' : 'no'}" role="status"><h4>${ok ? 'Correct.' : sel.length ? 'Not quite.' : 'No answer given.'}</h4>
       <p><b>Correct answer: ${q.type === 'num' ? F(q.show) + (q.unit ? ' ' + F(q.unit) : '') : q.correct.map(j => LETTERS[j]).join(', ')}</b>${!ok && sel.length && q.type !== 'num' ? ` · you chose ${sel.map(j => LETTERS[j]).join(', ')}` : ''}${!ok && sel.length && q.type === 'num' ? ` · you entered ${esc(sel[0])}` : ''}</p>
       <p>${F(q.expl)}</p>
-      <p class="tip">${ok ? 'Tip: say to yourself why each other option fails; that is what makes the idea stick.' : 'Tip: reread the explanation, then find the exact detail in the question that rules out your choice.'}${deck ? ` Brush up in <a href="#review" data-rvdeck="${deck.id}">Quick Review: ${esc(deck.title)}</a>.` : ''}</p></div>` : '';
+      ${deck ? `<p class="tip"><a href="#review" data-rvdeck="${deck.id}">Review ${esc(deck.title)} flashcards →</a></p>` : ''}</div>` : '';
   const act = ck ? `<button class="btn primary" id="pNext">${last ? 'See your summary' : 'Next question →'}</button>` : `<button class="btn primary" id="pCheck" ${sel.length ? '' : 'disabled'}>Check answer</button>`;
   const nav = `<div class="qnav"><button class="btn" id="backB2" ${T.cur === 0 ? 'disabled' : ''}>← Back</button>${act}</div>`;
   const kb = `<p class="kbd">Keyboard: ${q.type === 'num' ? 'type your answer' : `1–${q.choices.length} or A–${LETTERS[q.choices.length - 1]} to choose`} · Enter to ${ck ? 'continue' : 'check'}</p>`;
@@ -18881,7 +18905,7 @@ async function syncProgress() {
   catch (e) { if (isRejected(e)) { WRITE_OK = false; if (!inExam && $('#hub') && !$('#hub').hidden) route(); } }
 }
 
-function renderLoading() { setAccent(null); show('hub'); $('#hub').innerHTML = `<div class="page"><p class="muted">Loading Chalk &amp; Margin…</p></div>`; }
+function renderLoading() { setAccent(null); show('hub'); $('#hub').innerHTML = `<div class="page"><p class="muted">Loading Comma…</p></div>`; }
 function renderBlocked() {
   setAccent(null); show('hub');
   const M = {
@@ -18890,15 +18914,15 @@ function renderBlocked() {
     nocap: ['Sign in to Claude with your invited email', 'Claude couldn\'t connect this page to your account. Make sure you\'re signed in at claude.ai with the same email address the site owner invited (check for a different account or a private window), then open the link again.'],
     nodb: ['Your account doesn\'t have access yet', 'You\'re signed in, but this site isn\'t shared with your Claude account. Ask the site owner to add your email in the Share menu, then reload.'],
   }[BLOCK] || ['Invitation required', 'Open the link the site owner shared while signed in to Claude.'];
-  $('#hub').innerHTML = `<div class="page gate"><div class="eyebrow">Chalk &amp; Margin</div><h1 class="display">${M[0]}</h1><p class="lead">${M[1]}</p>
+  $('#hub').innerHTML = `<div class="page gate"><div class="eyebrow">Comma</div><h1 class="display">${M[0]}</h1><p class="lead">${M[1]}</p>
     <div class="row"><button class="btn primary" id="retryB">Try again</button></div>
     <p class="small muted" style="margin-top:18px">Still stuck? Email the site owner at ${OWNER_EMAIL} and mention code <span class="mono">${esc(BLOCK)}</span>.</p></div>`;
   $('#retryB').onclick = () => { $('#retryB').disabled = true; $('#retryB').textContent = 'Checking…'; MODE = 'loading'; initAuth().catch(() => { MODE = 'blocked'; BLOCK = 'host'; }).then(() => route()); };
 }
 function renderGate(err) {
   setAccent(null); show('hub');
-  $('#hub').innerHTML = `<div class="page gate"><div class="eyebrow">Chalk &amp; Margin</div><h1 class="display">Sign in</h1>
-    <p class="lead">These practice tests are shared by invitation. Sign in with your email address and the access code the site owner gave you.</p>
+  $('#hub').innerHTML = `<div class="page gate"><div class="eyebrow">Comma</div><h1 class="display">Sign in</h1>
+    <p class="lead">Sign in with your email and access code.</p>
     ${GATE_MSG ? `<p class="notice">${esc(GATE_MSG)}</p>` : ''}
     <section class="panel"><form id="gForm" autocomplete="off">
       ${!GUEST && ACCT_EMAIL ? `<p class="small" style="margin:0">Signed in to Claude as <b>${esc(ACCT_EMAIL)}</b>. Access codes work only with the email they were issued to.</p>` : ''}
@@ -18930,7 +18954,7 @@ const REP_KINDS = { bug: 'Bug or something broken', question: 'Problem with a qu
 function openReport(ctx, kind0) {
   const tx = ctx && BY_ID[ctx.test];
   const snip = ctx ? String(ctx.stem || '').replace(/<[^>]+>/g, ' ').replace(/\^\(([^)]*)\)/g, '^$1').replace(/[{}]/g, '').replace(/\s+/g, ' ').trim().slice(0, 160) : '';
-  const subject = ctx ? `Chalk & Margin: problem with a question (${tx ? tx.code : ctx.test} Q${ctx.q})` : kind0 === 'donate' ? 'Donating in KRW' : 'Chalk & Margin feedback';
+  const subject = ctx ? `Comma: problem with a question (${tx ? tx.code : ctx.test} Q${ctx.q})` : kind0 === 'donate' ? 'Donating in KRW' : 'Comma feedback';
   const body = ctx ? `Test: ${tx ? tx.code + ' ' + tx.subject : ctx.test}\nQuestion ${ctx.q} (id ${ctx.qid || ''})\n"${snip}${snip.length >= 160 ? '…' : ''}"\n\nWhat looks wrong:\n` : kind0 === 'donate' ? 'Hello, I would like to donate in Korean won (KRW). Please let me know how.\n' : '';
   $('#modal-root').innerHTML = `<div class="scrim" id="scrim"><div class="modal sm" role="dialog" aria-modal="true" aria-labelledby="rpT"><div class="mhead"><h3 id="rpT">${ctx ? 'Report a problem with this question' : kind0 === 'donate' ? 'Donate in KRW' : 'Send feedback'}</h3><button class="btn" id="rpClose">Close</button></div>
     <div class="mbody rep-form">
