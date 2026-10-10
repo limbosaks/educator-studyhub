@@ -21768,13 +21768,22 @@ function route() {
   else renderHome();
   bindNav();
 }
-let ROUTE = (location.hash || '').slice(1);
+/* Clean addresses (comma-ltd.com/practice) on the standalone website; inside Claude the page must keep #practice.
+   On GitHub Pages, 404.html is a copy of this page so a direct visit to /practice still loads the site. */
+const PATH_MODE = (() => { try { return !window.claude && window.top === window && /^https?:$/.test(location.protocol) && !!history.pushState; } catch (e) { return false; } })();
+const BASE = (() => { if (!PATH_MODE) return ''; const seg = location.pathname.split('/').filter(Boolean); return /\.github\.io$/.test(location.hostname) && seg.length ? '/' + seg[0] + '/' : '/'; })();
+const ROUTE_RE = /^[A-Za-z0-9._~-]*$/;
+function pathRoute() { let p = decodeURIComponent(location.pathname); if (p.startsWith(BASE)) p = p.slice(BASE.length); else p = p.replace(/^\//, ''); p = p.replace(/\/+$/, '').replace(/^index\.html$|^404\.html$/, ''); return ROUTE_RE.test(p) ? p : ''; }
+let ROUTE = PATH_MODE ? ((location.hash || '').slice(1) || pathRoute()) : (location.hash || '').slice(1);
+if (PATH_MODE) { try { history.replaceState(null, '', BASE + (ROUTE && ROUTE !== 'home' ? ROUTE : '')); } catch (e) {} }
 function go(hash) {
-  ROUTE = hash;
-  try { if (location.hash !== '#' + hash) history.replaceState(null, '', '#' + hash); } catch (e) {}
+  const changed = hash !== ROUTE; ROUTE = hash;
+  if (PATH_MODE) { try { const url = BASE + (hash && hash !== 'home' ? hash : ''); if (location.pathname !== url) history[changed ? 'pushState' : 'replaceState'](null, '', url); } catch (e) {} }
+  else { try { if (location.hash !== '#' + hash) history.replaceState(null, '', '#' + hash); } catch (e) {} }
   route();
 }
-window.addEventListener('hashchange', () => { const h = (location.hash || '').slice(1); if (h !== ROUTE) { ROUTE = h; route(); } });
+window.addEventListener('hashchange', () => { const h = (location.hash || '').slice(1); if (PATH_MODE) { if (h) go(h); return; } if (h !== ROUTE) { ROUTE = h; route(); } });
+window.addEventListener('popstate', () => { if (!PATH_MODE) return; const h = pathRoute(); if (h !== ROUTE) { ROUTE = h; route(); } });
 document.addEventListener('click', e => { const a = e.target.closest('a[href^="#"]'); if (!a) return; e.preventDefault(); if (a.dataset.pref) PREF_MODE = a.dataset.pref; const h = a.getAttribute('href').slice(1); if (h === ROUTE && /^about/.test(h)) { const el = document.getElementById(h === 'about-give' ? 'about-give' : 'hub'); if (el) el.scrollIntoView({ block: 'start' }); return; } go(h); });
 
 /* ═══════════ HUB PAGES ═══════════ */
