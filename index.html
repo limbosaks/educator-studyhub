@@ -184,9 +184,23 @@ p.lead { color: var(--muted); max-width: 62ch; margin: 0 0 22px; font-size: 17px
 .acc-test > summary:hover .t { text-decoration: underline; text-underline-offset: 3px; }
 .acc-go { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 4px 0 14px calc(3.4em + 16px); }
 @media (max-width: 560px) { .acc-go { padding-left: 4px; } .acc-go .btn { flex: 1 1 100%; } }
+.give-card { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-top: 18px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--ember) 45%, var(--line)); border-left: 4px solid var(--ember); background: color-mix(in srgb, var(--ember) 6%, var(--surface)); }
+.give-card .gc-txt { flex: 1 1 220px; display: grid; gap: 2px; font-size: 14px; color: var(--muted); }
+.give-card .gc-txt b { color: var(--ink); font-size: 15px; }
+.give-card .hrt { color: var(--ember); }
+.give-card .gc-act { display: grid; justify-items: start; gap: 4px; }
+.give-card .gc-act small { font-size: 11.5px; color: var(--muted); }
+.give-card.after { margin: 16px 0 0; padding-right: 40px; }
+.gc-x { position: absolute; top: 6px; right: 8px; border: 0; background: transparent; font-size: 20px; line-height: 1; color: var(--muted); cursor: pointer; padding: 4px 6px; }
+.gc-x:hover { color: var(--ink); }
+.give-btn { background: var(--ember) !important; border-color: var(--ember) !important; color: var(--surface) !important; font-weight: 700; }
+.give-btn:hover { filter: brightness(1.08); }
+.nav-give { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; font-size: 13px; text-decoration: none; color: var(--ember); border: 1px solid color-mix(in srgb, var(--ember) 55%, transparent); padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
+.nav-give:hover { background: var(--ember); color: var(--surface); border-color: var(--ember); }
+@media (max-width: 420px) { .nav-give .ng-l { display: none; } .nav-give { padding: 6px 10px; } }
 .give-tag { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13.5px; color: var(--muted); text-decoration: none; }
 .give-tag .hrt { color: var(--ember); } .give-tag:hover { color: var(--ink); }
-@media (max-width: 640px) { .specimen figure { display: none; } .specimen { margin-top: 0; } .give-tag { margin-top: 4px; } }
+@media (max-width: 640px) { .specimen figure { display: none; } .specimen { margin-top: 0; } .give-card.home { margin-top: 4px; } }
 .shelf { columns: 2 320px; column-gap: 48px; }
 .shelf-group { break-inside: avoid; margin: 0 0 26px; }
 .shelf-group h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin: 0 0 6px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
@@ -17979,11 +17993,17 @@ function navKey(active) {
   return active;
 }
 const initials = n => { const w = String(n || '').replace(/@.*/, '').replace(/[^\p{L}\p{N}\s]/gu, ' ').trim().split(/\s+/).filter(Boolean); const t = w.length > 1 ? w[0][0] + w[1][0] : (w[0] || '?').slice(0, 2); return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase(); };
+const STRIPE_A = (cls, label) => `<a class="${cls}" href="${STRIPE_LINK}" target="_blank" rel="noopener noreferrer" data-give="1">${label}</a>`;
+function giveCard(where) {
+  return `<aside class="give-card ${where}" aria-label="Support Comma"><div class="gc-txt"><b><span class="hrt" aria-hidden="true">♥</span> Keep Comma free</b><span>${where === 'after' ? 'Was this set useful? Chipping in helps me keep adding questions.' : 'No ads, no paywall. If it helps you, chip in whatever you like.'}</span></div>
+    <div class="gc-act">${STRIPE_A('btn give-btn', 'Donate')}<small>Any amount · secure via Stripe</small></div>${where === 'after' ? '<button class="gc-x" id="gcX" aria-label="Dismiss">×</button>' : ''}</aside>`;
+}
+let GIVE_DISMISSED = false;
 function nav(active) {
   const cur = navKey(active);
   return (PERSIST ? '' : `<div class="memnote" role="status">This browser view is blocking saved data, so your scores last only until you close this page. To keep your progress, open the page in a regular (not private) browser window.</div>`) + `<header class="nav"><div class="nav-in"><a class="brand" href="#home" aria-label="${BRAND} home">Comma<em>,</em></a>
     <nav class="tabs-nav" aria-label="Main">${NAV_ITEMS.map(([k, l]) => `<a href="#${k}" ${cur === k ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav><span class="spacer"></span>
-    <div class="nav-side">${MODE === 'owner' ? `<a class="nav-adm" href="#admin" ${cur === 'admin' ? 'aria-current="page"' : ''}>Admin</a>` : ''}${MODE === 'owner' && ROOM ? `<a class="live-pill ${liveCount() ? '' : 'zero'}" id="livePill" href="#admin" title="People on the site right now (only you can see this)"><i></i> ${liveCount()}</a>` : ''}
+    <div class="nav-side">${STRIPE_A('nav-give', '<span aria-hidden="true">♥</span><span class="ng-l"> Donate</span>')}${MODE === 'owner' ? `<a class="nav-adm" href="#admin" ${cur === 'admin' ? 'aria-current="page"' : ''}>Admin</a>` : ''}${MODE === 'owner' && ROOM ? `<a class="live-pill ${liveCount() ? '' : 'zero'}" id="livePill" href="#admin" title="People on the site right now (only you can see this)"><i></i> ${liveCount()}</a>` : ''}
     ${MODE === 'owner' || MODE === 'member' ? '<button class="nav-fb" id="fbBtn" title="Report a problem or send a suggestion" aria-label="Feedback">?</button>' : ''}
     ${me() ? `<button class="who" id="whoBtn" aria-label="Profile: ${esc(me().name)}" title="${esc(me().name)}"><span class="av">${esc(initials(me().name))}</span></button>` : ''}</div></div></header>`;
 }
@@ -18130,7 +18150,7 @@ function renderHome() {
           </div>
           <figcaption>Fig. 1 · Every answer comes with the reasoning</figcaption>
         </figure>
-        <a class="give-tag" href="#about-give"><span class="hrt" aria-hidden="true">♥</span> Comma is free. <u>Donations</u> keep it that way.</a>
+        ${giveCard('home')}
       </div>
     </section>
     ${all.length || inProg.length ? `<div class="progress-strip" aria-label="Your progress">
@@ -18160,20 +18180,23 @@ function renderCatalog(kind) {
 function renderAbout() {
   setAccent(null); show('hub');
   $('#hub').innerHTML = nav('about') + `<div class="page">
-    <div class="eyebrow">About</div><h1 class="display">Free practice for <em>future teachers</em>.</h1>
+    <div class="eyebrow">About</div><h1 class="display">Hi, this is <em>Comma</em>.</h1>
     <div class="about-grid" style="margin-top:22px">
       <div>
-        <p>Every question, flashcard, and writing prompt on ${BRAND} is original. Tests follow the public content outlines so practice feels realistic.</p>
+        <p>Comma is a free place to practice for teacher certification tests. Pick a subject, answer some questions, and see what you got wrong and why. That's really it.</p>
+        <p>Everything here was written from scratch for Comma: the questions, the flashcards, the writing prompts. Each test follows the public outline for the real one, so it should feel close.</p>
+        <p>If you spot a mistake (it happens), send an email and I'll fix it.</p>
         <p class="legal">${esc(DISCLAIMER)} Written-response feedback is an estimate, not an official score.</p>
       </div>
       <div>
-        <h3>Contact</h3>
+        <h3>Say hi</h3>
         <div class="copyline"><span class="addr" id="aboutMail">${OWNER_EMAIL}</span><button class="btn quiet" id="copyMail">Copy</button><span class="copied" id="copyMsg" aria-live="polite"></span></div>
-        <h3 style="margin-top:28px" id="about-give">Donate</h3>
-        <p>Card donations go through Stripe. Tax is added to the amount.</p>
-        <div class="row" style="margin:12px 0"><a class="btn primary big" href="${STRIPE_LINK}" target="_blank" rel="noopener noreferrer">Donate by card</a></div>
+        <h3 style="margin-top:28px" id="about-give">Chip in</h3>
+        <p>Comma doesn't run ads or charge anything. If it helped you, give whatever feels right. It goes toward keeping the site up and adding new tests.</p>
+        <p class="small muted">Payments go through Stripe. Tax is added at checkout.</p>
+        <div class="row" style="margin:12px 0">${STRIPE_A('btn give-btn big', '♥ Donate by card')}</div>
         <p class="small muted">Link not opening? Copy it: <span class="linkline">${STRIPE_LINK}</span></p>
-        <p class="small muted">Donating in KRW? Email ${OWNER_EMAIL}.</p>
+        <p class="small muted">Want to give in KRW? Just email me.</p>
       </div>
     </div>
     ${foot()}
@@ -18773,6 +18796,7 @@ function renderResults(rec, fresh) {
   $('#results').innerHTML = nav(x.id) + `<div class="page">
     <div class="crumb"><a href="#${rec.practice ? 'practice' : 'simulate'}" data-pref="${rec.practice ? 'practice' : 'simulate'}">${rec.practice ? 'Practice' : 'Exam Simulation'}</a> / <a href="#${x.id}">${esc(x.subject)}</a> / Results</div>
     <section class="panel score" id="scoreHead">${head()}</section>
+    ${fresh && !GIVE_DISMISSED ? giveCard('after') : ''}
     ${cats.length ? `<section class="panel" style="margin-top:20px"><h2>Performance by content category</h2>
       ${cats.map(c => { const [ok, t] = rec.byCat[c.k]; const p = Math.round(ok / t * 100); return `<div class="catrow"><span class="roman">${c.k}</span><div class="bp-name">${c.name}<div class="bar"><i class="${band(p)}" style="width:${p}%"></i></div></div><span class="mono small raw muted" style="text-align:right">${ok}/${t}</span><span class="pct">${p}%</span></div>`; }).join('')}</section>` : ''}
     <section class="panel" style="margin-top:20px"><div class="ag-h"><h2>Answers</h2><button class="linkbtn" id="agSort"></button></div>
@@ -18780,6 +18804,7 @@ function renderResults(rec, fresh) {
     <div class="chips" role="group" aria-label="Filter questions">${rec.cr ? `<button class="chip" data-f="cr">Written responses (${t0.n})</button>` : ''}<button class="chip" data-f="wrong">Incorrect (${nWrong})</button><button class="chip" data-f="all">All</button><button class="chip" data-f="skip">Not answered</button><button class="chip" data-f="mk">Marked</button>${cats.map(c => `<button class="chip" data-f="${c.k}">${c.k}</button>`).join('')}</div>
     <div id="rvList"></div></div>`;
   draw(); drawGrid(); bindNav(); bindHead();
+  if ($('#gcX')) $('#gcX').onclick = () => { GIVE_DISMISSED = true; const c = $('.give-card.after'); if (c) c.remove(); };
   $('#agSort').onclick = () => { agMode = agMode === 'cat' ? 'num' : 'cat'; drawGrid(); };
   $$('[data-f]').forEach(b => b.onclick = () => { rvFilter = b.dataset.f; draw(); });
 }
