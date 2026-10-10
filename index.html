@@ -88,10 +88,10 @@ select { padding: 8px 10px; border-radius: 3px; border: 1px solid var(--rule); b
 .brand em { font-style: normal; color: var(--ember); padding-inline: 1px 0; font-weight: 600; }
 .tabs-nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .tabs-nav::-webkit-scrollbar { display: none; }
-.tabs-nav a { display: flex; align-items: center; padding: 0 11px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 13.5px; white-space: nowrap; position: relative; }
+.tabs-nav a { display: flex; align-items: center; padding: 0 9px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 13.5px; white-space: nowrap; position: relative; }
 .tabs-nav a:hover { color: var(--ink); }
 .tabs-nav a[aria-current="page"] { color: var(--ink); }
-.tabs-nav a[aria-current="page"]::after { content: ""; position: absolute; left: 11px; right: 11px; bottom: -1px; height: 3px; background: var(--ember); }
+.tabs-nav a[aria-current="page"]::after { content: ""; position: absolute; left: 9px; right: 9px; bottom: -1px; height: 3px; background: var(--ember); }
 .nav-in .spacer { flex: 1; }
 .nav-side { display: flex; align-items: center; gap: 10px; }
 .nav-fb { border: 1px solid var(--line); background: transparent; border-radius: 3px; padding: 6px 10px; font-weight: 600; font-size: 13px; cursor: pointer; color: var(--ink); }
@@ -199,6 +199,17 @@ p.lead { color: var(--muted); max-width: 62ch; margin: 0 0 22px; font-size: 17px
 .nav-give { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; font-size: 13px; text-decoration: none; color: var(--ember); border: 1px solid color-mix(in srgb, var(--ember) 55%, transparent); padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
 .nav-give:hover { background: var(--ember); color: var(--surface); border-color: var(--ember); }
 @media (max-width: 420px) { .nav-give .ng-l { display: none; } .nav-give { padding: 6px 10px; } }
+.comm { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 32px 56px; align-items: start; padding: 8px 0 36px; }
+.comm-head .lead { max-width: 46ch; }
+.comm-go { display: inline-flex; align-items: center; gap: 8px; margin: 8px 0 6px; }
+.comm-go svg, .comm-list svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.comm-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.comm-list li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 18px 4px; border-bottom: 1px solid var(--line); }
+.comm-list .ic { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; color: var(--ember); background: var(--surface); }
+.comm-list .ic svg { width: 20px; height: 20px; }
+.comm-list b { display: block; font-family: var(--font-display); font-size: 20px; font-weight: 500; }
+.comm-list span:not(.ic) { color: var(--muted); font-size: 14.5px; }
+@media (max-width: 760px) { .comm { grid-template-columns: 1fr; } }
 .give-tag { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13.5px; color: var(--muted); text-decoration: none; }
 .give-tag .hrt { color: var(--ember); } .give-tag:hover { color: var(--ink); }
 @media (max-width: 640px) { .specimen figure { display: none; } .specimen { margin-top: 0; } .give-card.home { margin-top: 4px; } }
@@ -406,6 +417,12 @@ table.data th { background: var(--sunk); font-weight: 600; }
 .scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 20; display: grid; place-items: center; padding: 16px; }
 .modal { background: var(--surface); color: var(--ink); border: 1px solid var(--ink); width: min(980px, 100%); max-height: calc(100% - 24px); overflow: auto; box-shadow: 10px 10px 0 rgba(0,0,0,.18); }
 .modal.sm { width: min(480px, 100%); }
+.mail-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 12px; }
+.chk { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+td.cbx, th.cbx { width: 34px; text-align: center; } .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.cm-opts { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; } .cm-opts label { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; font-size: 13.5px; } .cm-opts input { min-width: 240px; }
+.cm-item { border-top: 1px solid var(--line); padding: 14px 0; } .cm-h { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; margin-bottom: 4px; }
+.cm-body { white-space: pre-wrap; font-family: var(--font-ui); font-size: 13.5px; background: var(--paper); border: 1px solid var(--line); padding: 12px 14px; margin: 8px 0 0; max-height: 300px; overflow: auto; }
 .mhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); z-index: 1; }
 .mhead h3 { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 21px; }
 .mbody { padding: 18px; }
@@ -610,6 +627,14 @@ details.rv-psg .psg { position: static; max-height: 360px; margin-top: 8px; }
 .about-grid h3 { font-family: var(--font-display); font-weight: 500; font-size: 24px; margin: 0 0 8px; }
 .legal { font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
 
+@media (max-width: 1180px) {
+  .nav-in { flex-wrap: wrap; gap: 0 12px; min-height: 0; }
+  .brand { min-height: 54px; }
+  .nav-in .spacer { display: none; }
+  .nav-side { margin-left: auto; min-height: 54px; }
+  .tabs-nav { order: 3; width: 100%; margin-inline: -9px; border-top: 1px solid var(--line); }
+  .tabs-nav a { min-height: 44px; }
+}
 @media (max-width: 1020px) {
   .lab { grid-template-columns: minmax(0, 1fr); }
   .lab-lib { border-right: 0; border-bottom: 1px solid var(--line); padding: 14px 0; }
@@ -21738,6 +21763,7 @@ function route() {
   else if (h === 'lab') renderLab();
   else if (h === 'review') renderReview();
   else if (h === 'about' || h === 'about-give' || h === 'support') renderAbout();
+  else if (h === 'community') renderCommunity();
   else if (BY_ID[h]) renderTestPage(BY_ID[h]);
   else renderHome();
   bindNav();
@@ -21752,7 +21778,7 @@ window.addEventListener('hashchange', () => { const h = (location.hash || '').sl
 document.addEventListener('click', e => { const a = e.target.closest('a[href^="#"]'); if (!a) return; e.preventDefault(); if (a.dataset.pref) PREF_MODE = a.dataset.pref; const h = a.getAttribute('href').slice(1); if (h === ROUTE && /^about/.test(h)) { const el = document.getElementById(h === 'about-give' ? 'about-give' : 'hub'); if (el) el.scrollIntoView({ block: 'start' }); return; } go(h); });
 
 /* ═══════════ HUB PAGES ═══════════ */
-const NAV_ITEMS = [['home', 'Home'], ['practice', 'Practice'], ['simulate', 'Exam Simulation'], ['lab', 'Response Lab'], ['review', 'Quick Review'], ['about', 'About']];
+const NAV_ITEMS = [['practice', 'Practice'], ['simulate', 'Exam Simulation'], ['lab', 'Response Lab'], ['review', 'Quick Review'], ['community', 'Community'], ['about', 'About']];
 let PREF_MODE = 'practice';
 function navKey(active) {
   if (BY_ID[active]) return PREF_MODE === 'simulate' ? 'simulate' : 'practice';
@@ -21787,7 +21813,7 @@ function spark(vals) {
 const DISCLAIMER = 'Comma is an independent study resource, not affiliated with or endorsed by ETS. Praxis® is a trademark of ETS. All content here is original.';
 function foot() {
   return `<footer class="foot"><div><p>${esc(DISCLAIMER)}</p><p>Scores are practice estimates, not official scores. © ${new Date().getFullYear()} ${BRAND}.</p></div>
-    <nav aria-label="Footer"><a href="#about">Contact</a><a href="#about-give">Donate</a></nav></footer>`;
+    <nav aria-label="Footer"><a href="#community">Community</a><a href="#about">Contact</a><a href="#about-give">Donate</a></nav></footer>`;
 }
 function bindNav() { const b = $('#whoBtn'); if (b) b.onclick = openProfileMenu; const f = $('#fbBtn'); if (f) f.onclick = () => openReport(null); }
 
@@ -21944,6 +21970,33 @@ function renderCatalog(kind) {
     ${foot()}
   </div>`;
   bindAcc();
+}
+const REDDIT = 'https://www.reddit.com/r/CommaClassroom/';
+const ICO = {
+  idea: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2v.5h5v-.5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z"/></svg>',
+  bug: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="13" rx="5"/><path d="M9 7a3 3 0 0 1 6 0M12 11v9M3 13h4M17 13h4M4 7l3 2M20 7l-3 2M4 19l3-2M20 19l-3-2"/></svg>',
+  job: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>',
+  ext: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
+};
+function renderCommunity() {
+  setAccent(null); show('hub');
+  $('#hub').innerHTML = nav('community') + `<div class="page">
+    <section class="comm">
+      <div class="comm-head">
+        <div class="eyebrow">Community</div>
+        <h1 class="display">Comma <em>Community</em></h1>
+        <p class="lead">Help make free teacher prep better. Have an idea for a new practice test? Found a bug? Want to share a teaching opportunity? Come say hi on Reddit.</p>
+        <a class="btn primary big comm-go" href="${REDDIT}" target="_blank" rel="noopener noreferrer">Visit r/CommaClassroom ${ICO.ext}</a>
+        <p class="small muted">Opens Reddit in a new tab.</p>
+      </div>
+      <ul class="comm-list">
+        <li><span class="ic">${ICO.idea}</span><div><b>Suggestions &amp; feature requests</b><span>Ask for new tests, topics, and features.</span></div></li>
+        <li><span class="ic">${ICO.bug}</span><div><b>Bug reports</b><span>Point out wrong answers, typos, or things that break.</span></div></li>
+        <li><span class="ic">${ICO.job}</span><div><b>Teaching jobs &amp; opportunities</b><span>Share openings and career resources.</span></div></li>
+      </ul>
+    </section>
+    ${foot()}
+  </div>`;
 }
 function renderAbout() {
   setAccent(null); show('hub');
@@ -22828,7 +22881,7 @@ function openReport(ctx, kind0) {
 }
 
 /* ── owner dashboard ── */
-let ADM = { tab: 'members', codes: [], members: [], reports: [], names: {}, loaded: false, err: '', open: {} };
+let ADM = { tab: 'members', codes: [], members: [], reports: [], names: {}, loaded: false, err: '', open: {}, sel: new Set() };
 async function admLoad() {
   ADM.err = '';
   const get = async p => { try { const s = await DB.doc(p).get(); return s.exists ? thaw(s.data()) : null; } catch (e) { return null; } };
@@ -22854,6 +22907,61 @@ async function admSaveCodes() {
   ACCESS = new Set(ACCESS_DOC.list);
 }
 async function admSaveRemoved() { await DB.doc('access/codes').set({ list: ACCESS_DOC.list, removed: ACCESS_DOC.removed, emails: ACCESS_DOC.emails }); }
+/* monthly code emails: the page can't send email itself, so each message opens in the owner's email app or is copied */
+const mailMonth = () => kstDay() >= 20 ? monthKey(1) : monthKey();
+const mailSent = mk => LS.get('pp.admin.mailsent.' + mk, {});
+const monthEn = mk => new Date(Date.UTC(+mk.slice(0, 4), +mk.slice(5) - 1, 15)).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+function codeMail(email, code, mk, site) {
+  const m = monthEn(mk), mo = m.split(' ')[0];
+  return { subject: `Your Comma access code for ${m}`,
+    body: `Hi there,
+
+Thank you so much for studying with Comma. It means a lot that you're using these resources to prepare, and I hope they've been helpful.
+
+Your access code for ${m} is:
+
+    ${code}
+
+Sign in at ${site} with this email address (${email}) and the code above. Codes refresh on the 1st of each month, and I'll send you the new one each time.
+
+If you have a minute, I'd love to hear what you think. You can leave a review, a suggestion, or a bug report in our community: ${REDDIT}
+
+Comma is free and has no ads. If you're able to, a small contribution goes a long way toward keeping it running: ${STRIPE_LINK}
+
+Good luck with your studying, and thank you again!
+
+Warmly,
+Comma
+${OWNER_EMAIL}` };
+}
+async function openCodeMail(emails, mk) {
+  if (!emails.length) return;
+  mk = mk || mailMonth(); const site = LS.get('pp.admin.siteurl', 'https://www.comma-ltd.com');
+  const items = await Promise.all(emails.map(async e => ({ e, code: await derivedCode(e, mk) })));
+  const sent = mailSent(mk);
+  $('#modal-root').innerHTML = `<div class="scrim" id="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cmT"><div class="mhead"><h3 id="cmT">Email ${emails.length === 1 ? 'access code' : emails.length + ' access codes'}</h3><button class="btn" id="cmClose">Close</button></div>
+    <div class="mbody">
+      <div class="cm-opts"><label>Code for <select id="cmMonth"><option value="${monthKey()}" ${mk === monthKey() ? 'selected' : ''}>${esc(monthEn(monthKey()))}</option><option value="${monthKey(1)}" ${mk === monthKey(1) ? 'selected' : ''}>${esc(monthEn(monthKey(1)))}</option></select></label>
+        <label>Site link <input id="cmSite" value="${esc(site)}" spellcheck="false"></label></div>
+      <p class="small muted" style="margin:6px 0 14px">Each person gets their own code, so each email is separate. "Open in email app" starts a draft you can review and send. If it doesn't open, use "Copy message" and paste it into your email.</p>
+      ${items.map(({ e, code }, i) => { const m = codeMail(e, code, mk, site); const href = 'mailto:' + encodeURIComponent(e) + '?subject=' + encodeURIComponent(m.subject) + '&body=' + encodeURIComponent(m.body);
+        return `<article class="cm-item"><div class="cm-h"><b>${esc(e)}</b><span class="mono">${esc(code)}</span>${sent[e] ? '<span class="st-on small">✓ marked sent</span>' : ''}</div>
+          <div class="small"><b>Subject:</b> ${esc(m.subject)}</div>
+          <details ${items.length === 1 ? 'open' : ''}><summary class="small">Preview message</summary><pre class="cm-body">${esc(m.body)}</pre></details>
+          <div class="row" style="gap:8px;margin-top:8px"><a class="btn primary" href="${href}" target="_blank" rel="noopener" data-cmopen="${i}">Open in email app</a><button class="btn" data-cmcopy="${i}">Copy message</button><button class="btn quiet" data-cmsubj="${i}">Copy subject</button><label class="chk small"><input type="checkbox" data-cmsent="${i}" ${sent[e] ? 'checked' : ''}> Mark as sent</label><span class="small" data-cmmsg="${i}" style="color:var(--good)"></span></div></article>`; }).join('')}
+    </div></div></div>`;
+  const reopen = () => openCodeMail(emails, $('#cmMonth').value);
+  const msg = (i, t) => { const el = $(`[data-cmmsg="${i}"]`); if (el) el.textContent = t; };
+  const copy = (txt, i, label) => { try { navigator.clipboard.writeText(txt).then(() => msg(i, label + ' copied'), () => msg(i, 'Copy blocked; open the preview and copy it by hand')); } catch (e) { msg(i, 'Copy blocked; open the preview and copy it by hand'); } };
+  const setSent = (i, on) => { const d = mailSent(mk); if (on) d[items[i].e] = new Date().toISOString(); else delete d[items[i].e]; LS.set('pp.admin.mailsent.' + mk, d); };
+  $('#cmClose').onclick = () => { closeModal(); if (ROUTE === 'admin') { renderAdmin(); bindNav(); } };
+  $('#cmMonth').onchange = reopen;
+  $('#cmSite').onchange = () => { LS.set('pp.admin.siteurl', $('#cmSite').value.trim() || 'https://www.comma-ltd.com'); reopen(); };
+  $$('[data-cmcopy]').forEach(b => b.onclick = () => { const i = +b.dataset.cmcopy; const m = codeMail(items[i].e, items[i].code, mk, $('#cmSite').value.trim()); copy(m.body, i, 'Message'); });
+  $$('[data-cmsubj]').forEach(b => b.onclick = () => { const i = +b.dataset.cmsubj; copy(codeMail(items[i].e, items[i].code, mk, site).subject, i, 'Subject'); });
+  $$('[data-cmopen]').forEach(a => a.addEventListener('click', () => { const i = +a.dataset.cmopen; setSent(i, true); const c = $(`[data-cmsent="${i}"]`); if (c) c.checked = true; msg(i, 'Draft opened. Marked as sent.'); }));
+  $$('[data-cmsent]').forEach(c => c.onchange = () => setSent(+c.dataset.cmsent, c.checked));
+}
 function admFlash(m) { const f = $('#admMsg'); if (f) { f.textContent = m; setTimeout(() => { if (f.textContent === m) f.textContent = ''; }, 3000); } }
 const ago = iso => { if (!iso) return '—'; const d = (Date.now() - new Date(iso)) / 6e4; return d < 2 ? 'just now' : d < 60 ? Math.round(d) + ' min ago' : d < 1440 ? Math.round(d / 60) + ' h ago' : fmtDate(iso); };
 function renderAdmin() {
@@ -22878,10 +22986,12 @@ function admBody() {
       <p class="small muted" style="margin-top:0">Enter the person's email. The site makes their access code. <b>Codes change on the 1st of every month</b> (Korea time), so a shared code stops working at the end of the month; send each person their new code. Last month's code keeps working through the 3rd.</p>
       <form class="admin-form" id="cForm" autocomplete="off"><input id="cEmail" type="email" maxlength="80" placeholder="Their email, e.g. jenny@example.com"><button class="btn primary" type="submit">Add</button></form>
       <div class="err" id="cErr" role="alert"></div></section>
-    <section class="panel" style="margin-top:16px"><h2>People with access</h2>${ADM.codes.length ? `<div class="tablewrap"><table class="adm"><thead><tr><th>Email</th><th>${esc(monthName(monthKey()))} code</th>${kstDay() >= 20 ? `<th>${esc(monthName(monthKey(1)))} code</th>` : ''}<th>Signed in</th><th>Status</th><th></th></tr></thead><tbody>
+    <section class="panel" style="margin-top:16px"><h2>People with access</h2>${ADM.codes.length ? `<div class="mail-bar"><label class="chk"><input type="checkbox" id="ceAll" ${ADM.codes.filter(c => !c.revoked && c.email).length && ADM.codes.filter(c => !c.revoked && c.email).every(c => ADM.sel.has(c.email)) ? 'checked' : ''}> Select all active</label><button class="btn primary" id="ceSel" ${ADM.sel.size ? '' : 'disabled'}>✉ Email code${ADM.sel.size === 1 ? '' : 's'} to selected (${ADM.sel.size})</button><span class="small muted">Sent this month: ${ADM.codes.filter(c => !c.revoked && c.email && mailSent(mailMonth())[c.email]).length} of ${ADM.codes.filter(c => !c.revoked && c.email).length}</span></div>
+      <div class="tablewrap"><table class="adm"><thead><tr><th class="cbx"><span class="sr">Select</span></th><th>Email</th><th>${esc(monthName(monthKey()))} code</th>${kstDay() >= 20 ? `<th>${esc(monthName(monthKey(1)))} code</th>` : ''}<th>Signed in</th><th>Status</th><th></th></tr></thead><tbody>
       ${ADM.codes.slice().reverse().map(c => { const n = ADM.members.filter(m => !m.imported && normEmail(m.email || m.name || '') === normEmail(c.email || '')).length; const cur = (ADM.cur || {})[c.email] || '…', nxt = (ADM.next || {})[c.email] || '…';
-        return `<tr><td><b>${esc(c.email || c.label || '—')}</b><br><small class="muted">added ${fmtDate(c.created)}</small></td><td class="mono"><b>${esc(cur)}</b> <button class="linkbtn sm" data-cc="${esc(cur)}">Copy code</button></td>${kstDay() >= 20 ? `<td class="mono">${esc(nxt)} <button class="linkbtn sm" data-cc="${esc(nxt)}">Copy</button><br><small class="muted">starts ${esc(monthName(monthKey(1)).split(' ')[0])} 1</small></td>` : ''}<td class="mono">${n ? 'Yes' : 'Not yet'}</td><td>${c.revoked ? '<span class="st-off">Turned off</span>' : '<span class="st-on">Active</span>'}</td>
-        <td><div class="row" style="gap:6px">${c.revoked ? `<button class="btn" data-cre="${c.hash}">Turn on</button><button class="btn danger" data-cdel="${c.hash}">Delete</button>` : `<button class="btn danger" data-crev="${c.hash}">Turn off</button>`}</div></td></tr>`; }).join('')}</tbody></table></div>
+        const sent = c.email && mailSent(mailMonth())[c.email];
+        return `<tr><td class="cbx">${!c.revoked && c.email ? `<input type="checkbox" data-csel="${esc(c.email)}" aria-label="Select ${esc(c.email)}" ${ADM.sel.has(c.email) ? 'checked' : ''}>` : ''}</td><td><b>${esc(c.email || c.label || '—')}</b><br><small class="muted">added ${fmtDate(c.created)}</small>${sent ? `<br><span class="st-on small">✓ ${esc(monthName(mailMonth()).split(' ')[0])} code emailed</span>` : ''}</td><td class="mono"><b>${esc(cur)}</b> <button class="linkbtn sm" data-cc="${esc(cur)}">Copy code</button></td>${kstDay() >= 20 ? `<td class="mono">${esc(nxt)} <button class="linkbtn sm" data-cc="${esc(nxt)}">Copy</button><br><small class="muted">starts ${esc(monthName(monthKey(1)).split(' ')[0])} 1</small></td>` : ''}<td class="mono">${n ? 'Yes' : 'Not yet'}</td><td>${c.revoked ? '<span class="st-off">Turned off</span>' : '<span class="st-on">Active</span>'}</td>
+        <td><div class="row" style="gap:6px">${!c.revoked && c.email ? `<button class="btn" data-cem="${esc(c.email)}">✉ Email</button>` : ''}${c.revoked ? `<button class="btn" data-cre="${c.hash}">Turn on</button><button class="btn danger" data-cdel="${c.hash}">Delete</button>` : `<button class="btn danger" data-crev="${c.hash}">Turn off</button>`}</div></td></tr>`; }).join('')}</tbody></table></div>
       <p class="small muted">"Copy code" copies just the access code.${kstDay() >= 20 ? ' Next month\'s codes are shown from the 20th so you can send them ahead of time.' : ' Next month\'s codes appear here from the 20th.'} Turning off access locks that person out the next time they open the site; their progress stays in the Members list.</p>` : '<div class="empty">No one has access yet. Add a person above, then send them the site link with their email and access code.</div>'}</section>`;
   if (ADM.tab === 'reports') return ADM.reports.length ? `<div style="display:grid;gap:10px">${ADM.reports.map(r => { const tx = r.test && BY_ID[r.test]; return `<div class="rep ${r.resolved ? 'done' : ''}">
       <div class="rh"><b style="color:var(--ink)">${esc(r.who)}</b><span class="chip-s">${esc(REP_KINDS[r.kind] || r.kind)}</span><span>${fmtDate(r.date)}</span>${r.resolved ? '<span class="st-on">Resolved</span>' : ''}<span style="flex:1"></span>
@@ -22925,6 +23035,10 @@ function admBind() {
     ADM.codes.push({ email, label: email, hash: await emHash(email), monthly: true, created: new Date().toISOString() });
     ADM.cur[email] = await derivedCode(email); ADM.next[email] = await derivedCode(email, monthKey(1)); await guard(admSaveCodes, `Added ${email} · code ${ADM.cur[email]}`); };
   formFix('#cForm');
+  $$('[data-csel]').forEach(b => b.onchange = () => { b.checked ? ADM.sel.add(b.dataset.csel) : ADM.sel.delete(b.dataset.csel); redo(); });
+  if ($('#ceAll')) $('#ceAll').onchange = () => { const act = ADM.codes.filter(c => !c.revoked && c.email).map(c => c.email); if ($('#ceAll').checked) act.forEach(e => ADM.sel.add(e)); else ADM.sel.clear(); redo(); };
+  if ($('#ceSel')) $('#ceSel').onclick = () => openCodeMail([...ADM.sel]);
+  $$('[data-cem]').forEach(b => b.onclick = () => openCodeMail([b.dataset.cem]));
   $$('[data-cc]').forEach(b => b.onclick = () => { const txt = b.dataset.cc;
     try { navigator.clipboard.writeText(txt).then(() => admFlash('Copied ' + txt), () => admFlash('Select the code and copy it')); } catch (e) { admFlash('Select the code and copy it'); } });
   $$('[data-crev]').forEach(b => b.onclick = () => confirmBox('Turn off this access?', 'This person loses access the next time they open the site while signed in to Claude. If they use the site without signing in, ask Claude to update the site to lock them out there too. You can turn it back on later.', 'Turn off', () => {
