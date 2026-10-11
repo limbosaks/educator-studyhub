@@ -211,6 +211,12 @@ p.lead { color: var(--muted); max-width: 62ch; margin: 0 0 22px; font-size: 17px
 .comm-list b { display: block; font-family: var(--font-display); font-size: 20px; font-weight: 500; }
 .comm-list span:not(.ic) { color: var(--muted); font-size: 14.5px; }
 @media (max-width: 760px) { .comm { grid-template-columns: 1fr; } }
+.accts ul { list-style: none; margin: 0; padding: 0; } .accts li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.accts .av { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-weight: 700; font-size: 13px; } .accts .em { flex: 1; min-width: 160px; font-weight: 600; word-break: break-all; }
+.ref-card { margin-top: 12px; padding: 12px 16px; border: 1px solid var(--line); border-left: 4px solid var(--cobalt); background: var(--surface); font-size: 14px; }
+.ref-card .ref-txt { display: grid; gap: 4px; } .ref-card b { font-size: 15px; } .ref-card span { color: var(--ink); }
+.ref-card a { color: var(--cobalt); font-weight: 600; word-break: break-all; } .ref-card small { color: var(--muted); font-size: 12px; }
+.ref-card.about { margin-top: 22px; }
 .give-tag { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13.5px; color: var(--muted); text-decoration: none; }
 .give-tag .hrt { color: var(--ember); } .give-tag:hover { color: var(--ink); }
 @media (max-width: 640px) { .specimen figure { display: none; } .specimen { margin-top: 0; } .give-card.home { margin-top: 4px; } }
@@ -28189,7 +28195,7 @@ const PLT_SOON = [
    each person's code is made from their email, SITE_KEY and the current month (Korea time), so codes change on the 1st of every month. */
 const SITE_KEY = 'pp-0da28cd0a82cbf36cb8df9c60ae6c4b0', BRAND = 'Comma';
 const EMBED_REVOKED = [];
-let ACCT_EMAIL = null, GUEST = false, ROOM = null, ROOM_P = null, LIVE = [];
+let ADMIN_ROLE = null, ACCT_EMAIL = null, GUEST = false, ROOM = null, ROOM_P = null, LIVE = [];
 /* live presence: each open page says only whether it is browsing or in a test; only the owner's page counts and shows it */
 let LIVE_TAG = null;
 function livePresence() { if (!ROOM) return; try { ROOM.presence({ s: inExam ? 'test' : 'browse', t: inExam && X ? X.code : null, u: MODE === 'owner' ? 'o' : 'm', a: LIVE_TAG }).catch(() => {}); } catch (e) {} }
@@ -28647,6 +28653,7 @@ function renderHome() {
           <figcaption>Fig. 1 · Every answer comes with the reasoning</figcaption>
         </figure>
         ${giveCard('home')}
+        ${referralHTML('home')}
       </div>
     </section>
     ${all.length || inProg.length ? `<div class="progress-strip" aria-label="Your progress">
@@ -28674,6 +28681,11 @@ function renderCatalog(kind) {
   bindAcc();
 }
 const REDDIT = 'https://www.reddit.com/r/CommaClassroom/';
+const REFERRAL = 'https://join.moreland.edu/mQTiPj6';
+function referralHTML(where) {
+  return `<aside class="ref-card ${where}" aria-label="Moreland University referral"><div class="ref-txt"><b>Becoming a teacher?</b><span>Interested in earning your teaching certification through Moreland University? If you're considering applying, you can use my referral link when you apply: <a href="${REFERRAL}" target="_blank" rel="noopener noreferrer">join.moreland.edu/mQTiPj6</a></span>
+    <small>Optional. Comma's resources are free either way. Comma isn't affiliated with Moreland University; this is a personal referral link.</small></div></aside>`;
+}
 const ICO = {
   idea: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2v.5h5v-.5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z"/></svg>',
   bug: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="13" rx="5"/><path d="M9 7a3 3 0 0 1 6 0M12 11v9M3 13h4M17 13h4M4 7l3 2M20 7l-3 2M4 19l3-2M20 19l-3-2"/></svg>',
@@ -28720,6 +28732,7 @@ function renderAbout() {
         <div class="row" style="margin:12px 0">${STRIPE_A('btn give-btn big', '♥ Donate by card')}</div>
         <p class="small muted">Link not opening? Copy it: <span class="linkline">${STRIPE_LINK}</span></p>
         <p class="small muted">Want to give in KRW? Just email me.</p>
+        ${referralHTML('about')}
       </div>
     </div>
     ${foot()}
@@ -29446,8 +29459,8 @@ async function initAuth() {
   ROOM_P = safe('room');
   SAMPLE_P = safe('sample').then(h => { SAMPLE = typeof h === 'function' ? h : null; if (SAMPLE && ROUTE === 'lab' && !inExam && !$('#labAI') && $('#labIn') && document.activeElement !== $('#labIn')) { renderLab(); bindNav(); } return SAMPLE; });
   if (!DB) return enterGuestGate();
-  let owner = false; if (USER) { try { owner = await USER.isOwner(); } catch (e) {} }
-  if (owner) { MODE = 'owner'; return; }
+  let owner = false, editor = false; if (USER) { try { owner = await USER.isOwner(); } catch (e) {} if (!owner) { try { editor = await USER.canEdit(); } catch (e) {} } }
+  if (owner || editor) { MODE = 'owner'; ADMIN_ROLE = owner ? 'owner' : 'editor'; return; }
   try { UID = USER ? await USER.id() : null; } catch (e) { UID = null; }
   try { ACCT_EMAIL = USER && USER.email ? normEmail(await USER.email() || '') || null : null; } catch (e) { ACCT_EMAIL = null; }
   await loadAccess();
@@ -29458,7 +29471,7 @@ async function initAuth() {
   if (LS.get('pp.signedout.' + memberKey(), false)) MEMBER = null;
   if (!ACCESS.size && !MEMBER) { let v = null; try { v = USER ? await USER.me() : null; } catch (e) {} if (USER && (!v || (!v.id && !v.name))) { MODE = 'blocked'; BLOCK = 'signin'; return; } }
   if (MEMBER && ACCESS_DOC.removed.includes(memberKey())) { MEMBER = null; GATE_MSG = 'The site owner removed your access. Ask them for a new access code.'; MODE = 'gate'; return; }
-  if (MEMBER) { const active = await emailActive(MEMBER.email || ''); const ok = active && MEMBER.code && await codeOK(MEMBER.email, MEMBER.code);
+  if (MEMBER) { const active = await emailActive(MEMBER.email || ''); const ok = active && await sessionOK(MEMBER);
     if (!ok) { GATE_MSG = active ? 'Access codes change every month. Enter this month\'s code from the site owner to keep practicing — your scores are still here.' : 'Your access is no longer active. Ask the site owner for a new code.'; MEMBER = null; MODE = 'gate'; return; } }
   if (MEMBER && ACCT_EMAIL && MEMBER.email && normEmail(MEMBER.email) !== ACCT_EMAIL) { MEMBER = null; GATE_MSG = 'This access belongs to a different email address than the Claude account you\'re signed in with.'; MODE = 'gate'; return; }
   if (!MEMBER) { MODE = 'gate'; return; }
@@ -29472,6 +29485,20 @@ async function codeOK(email, code) { const c = normCode(code); if (c === normCod
 const emHash = email => sha256hex('em|' + normEmail(email));
 async function emailActive(email) { return ACCESS_DOC.emails.includes(await emHash(email)); }
 async function derivedCode(email, mk = monthKey()) { const h = await sha256hex(SITE_KEY + '|' + normEmail(email) + '|' + mk); let c = ''; for (let i = 0; i < 8; i++) { if (i === 4) c += '-'; c += CODE_ABC[parseInt(h.slice(i * 4, i * 4 + 4), 16) % CODE_ABC.length]; } return c; }
+/* remembered sign-in: the device keeps only a one-way check value (never the code). It is valid only while it
+   matches this month's code for that email (plus the 3-day grace) and for 30 days after the last sign-in. */
+const SESSION_DAYS = 30;
+const ckOf = (email, code) => sha256hex('ck|' + SITE_KEY + '|' + normEmail(email) + '|' + normCode(code));
+async function ckOK(email, ck) { if (!ck) return false; if (ck === await ckOf(email, await derivedCode(email))) return true; return kstDay() <= 3 && ck === await ckOf(email, await derivedCode(email, monthKey(-1))); }
+async function sessionOK(m) {
+  if (!m || !m.email) return false;
+  if (m.code && !m.ck) { m.ck = await ckOf(m.email, m.code); delete m.code; }
+  if (m.exp && Date.parse(m.exp) < Date.now()) return false;
+  return ckOK(m.email, m.ck);
+}
+const ACCTS = 'pp.accounts';
+const rememberAcct = email => { const a = LS.get(ACCTS, []).filter(x => x.email !== email); a.unshift({ email, last: new Date().toISOString() }); LS.set(ACCTS, a.slice(0, 5)); };
+const forgetAcct = email => { LS.set(ACCTS, LS.get(ACCTS, []).filter(x => x.email !== email)); const m = LS.get('pp.member.' + memberKey(), null); if (m && m.email === email) LS.del('pp.member.' + memberKey()); };
 async function guestValid(email, code) {
   if (EMBED_REVOKED.includes(await sha256hex('rev|' + normEmail(email)))) return false;
   return codeOK(email, code);
@@ -29481,7 +29508,7 @@ async function enterGuestGate() {
   GUEST = true; DB = null; WRITE_OK = false;
   const local = LS.get('pp.member.' + memberKey(), null);
   if (LS.get('pp.signedout.' + memberKey(), false)) { MODE = 'gate'; return; }
-  if (local && local.email && local.code && await guestValid(local.email, local.code)) { MEMBER = local; enterMember(); return; }
+  if (local && local.email && !EMBED_REVOKED.includes(await sha256hex('rev|' + normEmail(local.email))) && await sessionOK(local)) { MEMBER = local; enterMember(); return; }
   if (local && local.email) GATE_MSG = 'Access codes change every month. Enter this month\'s code from the site owner to keep practicing — your scores are still here.';
   MODE = 'gate';
 }
@@ -29494,14 +29521,22 @@ function memberPID(email) {
   return newP;
 }
 function signOut() {
-  confirmBox('Sign out?', 'Your scores stay saved in this browser and come back when you sign in again with the same email and code.', 'Sign out', () => {
-    leaveExam(); LS.set('pp.signedout.' + memberKey(), true); MEMBER = null; PID = null; MODE = 'gate'; GATE_MSG = 'You\'ve signed out.'; go('home'); });
+  const email = MEMBER && MEMBER.email;
+  confirmBox('Sign out?', 'Your scores stay saved in this browser. Next time, pick your account and enter your current access code.', 'Sign out', () => {
+    const forget = SO_FORGET;
+    leaveExam(); LS.set('pp.signedout.' + memberKey(), true); const m = LS.get('pp.member.' + memberKey(), null); if (m) { delete m.ck; delete m.exp; LS.set('pp.member.' + memberKey(), m); }
+    if (forget && email) forgetAcct(email);
+    MEMBER = null; PID = null; MODE = 'gate'; GATE_MSG = forget ? 'You signed out, and this device forgot your account.' : 'You signed out.'; go('home'); });
+  SO_FORGET = false;
+  const body = $('.modal .mbody'); if (body && email) { body.insertAdjacentHTML('beforeend', `<label class="chk" style="margin-top:12px;display:flex"><input type="checkbox" id="soForget"> Also forget ${esc(email)} on this device</label>`); $('#soForget').onchange = e => { SO_FORGET = e.target.checked; }; }
 }
+let SO_FORGET = false;
 function enterMember() {
   LS.del('pp.signedout.' + memberKey());
   if (MEMBER && MEMBER.email) sha256hex('live|' + normEmail(MEMBER.email)).then(h => { LIVE_TAG = h.slice(0, 16); livePresence(); });
   MODE = 'member'; PID = memberPID(MEMBER.email);
-  LS.set('pp.member.' + memberKey(), { name: MEMBER.name, email: MEMBER.email, codeHash: MEMBER.codeHash || '', joinedAt: MEMBER.joinedAt, code: MEMBER.code });
+  MEMBER.exp = new Date(Date.now() + SESSION_DAYS * 864e5).toISOString(); delete MEMBER.code;
+  LS.set('pp.member.' + memberKey(), { name: MEMBER.name, email: MEMBER.email, ck: MEMBER.ck, exp: MEMBER.exp, joinedAt: MEMBER.joinedAt }); rememberAcct(MEMBER.email);
   syncProgress();
 }
 function memberStats() {
@@ -29516,7 +29551,7 @@ function memberStats() {
 async function syncProgress() {
   if (MODE !== 'member' || !MEMBER || !DB || !WRITE_OK) return;
   const { stats, recent } = memberStats();
-  const doc = { name: MEMBER.name, email: MEMBER.email || '', acct: ACCT_EMAIL || '', code: MEMBER.code || '', codeHash: MEMBER.codeHash || '', key: memberKey(), joinedAt: MEMBER.joinedAt, lastActive: new Date().toISOString(), stats, recent };
+  const doc = { name: MEMBER.name, email: MEMBER.email || '', acct: ACCT_EMAIL || '', ck: MEMBER.ck || '', exp: MEMBER.exp || '', key: memberKey(), joinedAt: MEMBER.joinedAt, lastActive: new Date().toISOString(), stats, recent };
   try { await DB.doc(memberPath()).set(doc); }
   catch (e) { if (isRejected(e)) { WRITE_OK = false; if (!inExam && $('#hub') && !$('#hub').hidden) route(); } }
 }
@@ -29540,6 +29575,7 @@ function renderGate(err) {
   $('#hub').innerHTML = `<div class="page gate"><div class="eyebrow">Comma</div><h1 class="display">Sign in</h1>
     <p class="lead">Sign in with your email and access code.</p>
     ${GATE_MSG ? `<p class="notice">${esc(GATE_MSG)}</p>` : ''}
+    ${(GUEST || !ACCT_EMAIL) && LS.get(ACCTS, []).length ? `<section class="panel accts"><h2>Accounts on this device</h2><ul>${LS.get(ACCTS, []).map(a => `<li><span class="av">${esc(initials(a.email))}</span><span class="em">${esc(a.email)}</span><button class="btn" data-acct="${esc(a.email)}">Use this account</button><button class="linkbtn sm" data-acctx="${esc(a.email)}">Remove</button></li>`).join('')}</ul><p class="small muted" style="margin:6px 0 0">Your access code isn't stored on this device. Choose your account, then enter this month's code.</p></section>` : ''}
     <section class="panel"><form id="gForm" autocomplete="off">
       ${!GUEST && ACCT_EMAIL ? `<p class="small" style="margin:0">Signed in to Claude as <b>${esc(ACCT_EMAIL)}</b>. Access codes work only with the email they were issued to.</p>` : ''}
       <label>Email<input id="gName" type="email" maxlength="80" ${!GUEST && ACCT_EMAIL ? `value="${esc(ACCT_EMAIL)}" readonly` : (LS.get('pp.member.' + memberKey(), null) || {}).email ? `value="${esc(LS.get('pp.member.' + memberKey(), null).email)}"` : ''} placeholder="you@example.com" autocomplete="email"></label>
@@ -29554,15 +29590,17 @@ function renderGate(err) {
     if (normCode(code).length < 4) return fail('Enter your access code.');
     $('#gGo').disabled = true;
     if (GUEST) { if (!(await guestValid(email, code))) return fail('That email and access code don\'t match. Codes change every month, so check you have this month\'s code, or ask the site owner.');
-      MEMBER = { name: email, email, code: normCode(code), codeHash: '', joinedAt: new Date().toISOString() }; GATE_MSG = ''; enterMember(); go('home'); return; }
+      MEMBER = { name: email, email, ck: await ckOf(email, code), joinedAt: new Date().toISOString() }; GATE_MSG = ''; enterMember(); go('home'); return; }
     await loadAccess();
     if (!ACCESS_DOC.emails.length) return fail('The site couldn\'t load its invitation list for your Claude account. Make sure you\'re signed in at claude.ai with the email the site owner shared the site with, then reload.');
     if (!(await emailActive(email)) || !(await codeOK(email, code))) return fail('That email and access code don\'t match. Codes change every month, so check you have this month\'s code, or ask the site owner.');
     if (ACCESS_DOC.removed.includes(memberKey())) return fail('The site owner removed your access. Ask them to restore it.');
-    MEMBER = { name: email, email, code: normCode(code), codeHash: '', joinedAt: new Date().toISOString() }; GATE_MSG = '';
+    MEMBER = { name: email, email, ck: await ckOf(email, code), joinedAt: new Date().toISOString() }; GATE_MSG = '';
     enterMember(); go('home');
   };
   formFix('#gForm'); (!GUEST && ACCT_EMAIL ? $('#gCode') : $('#gName')).focus();
+  $$('[data-acct]').forEach(b => b.onclick = () => { $('#gName').value = b.dataset.acct; $('#gCode').value = ''; $('#gCode').focus(); });
+  $$('[data-acctx]').forEach(b => b.onclick = () => { forgetAcct(b.dataset.acctx); renderGate(); });
 }
 
 /* ── reports ── */
@@ -29707,6 +29745,7 @@ function admBody() {
       <li>Open the <b>Access</b> tab and add the person's email with an access code (or let the site generate one).</li>
       <li>In Claude, open this site's <b>Share</b> menu. Either turn on <b>Anyone with the link</b> so people can use the site without a Claude account, or add people by email. Only people added as <b>Editor</b> (outside your organization) or <b>Contributor</b> (inside it) have their progress saved here; everyone else's scores stay in their own browser.</li>
       <li>Send them the site link, plus the email and access code you registered ("Copy code" copies the code). They sign in with that email and code.</li></ol>
+      <h2 style="margin-top:18px">Who is an admin</h2><p class="small" style="margin:0">Admins are the site owner and anyone the owner adds as <b>Editor</b> in Claude's Share menu. Claude verifies who they are, so they don't need an access code or password. To add or remove an admin, change their role in the Share menu. Editors can also edit the site itself, so give that role only to people you trust.</p>
       <p class="notice" style="margin-top:14px">Keep link sharing turned off in the Share menu, so only the people you add can open the site. An Editor can also change the site itself, so give that level only to people you trust.</p></section>`;
   const tname = id => BY_ID[id] ? BY_ID[id].code : id;
   const useCount = {}; ADM.members.filter(m => !m.imported).forEach(m => { const k = normEmail(m.email || m.name || ''); useCount[k] = (useCount[k] || 0) + 1; });
