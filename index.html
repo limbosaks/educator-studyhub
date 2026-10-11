@@ -215,7 +215,8 @@ p.lead { color: var(--muted); max-width: 62ch; margin: 0 0 22px; font-size: 17px
 .accts .av { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-weight: 700; font-size: 13px; } .accts .em { flex: 1; min-width: 160px; font-weight: 600; word-break: break-all; }
 .ref-card { margin-top: 12px; padding: 12px 16px; border: 1px solid var(--line); border-left: 4px solid var(--cobalt); background: var(--surface); font-size: 14px; }
 .ref-card .ref-txt { display: grid; gap: 4px; } .ref-card b { font-size: 15px; } .ref-card span { color: var(--ink); }
-.ref-card a { color: var(--cobalt); font-weight: 600; word-break: break-all; } .ref-card small { color: var(--muted); font-size: 12px; }
+.ref-card a.ref-link { justify-self: start; display: inline-flex; gap: 6px; align-items: center; margin: 4px 0 2px; padding: 6px 12px; border: 1px solid var(--cobalt); color: var(--cobalt); font-weight: 600; text-decoration: none; white-space: nowrap; }
+.ref-card a.ref-link:hover { background: var(--cobalt); color: var(--surface); } .ref-card small { color: var(--muted); font-size: 12px; }
 .ref-card.about { margin-top: 22px; }
 .give-tag { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13.5px; color: var(--muted); text-decoration: none; }
 .give-tag .hrt { color: var(--ember); } .give-tag:hover { color: var(--ink); }
@@ -28683,7 +28684,8 @@ function renderCatalog(kind) {
 const REDDIT = 'https://www.reddit.com/r/CommaClassroom/';
 const REFERRAL = 'https://join.moreland.edu/mQTiPj6';
 function referralHTML(where) {
-  return `<aside class="ref-card ${where}" aria-label="Moreland University referral"><div class="ref-txt"><b>Becoming a teacher?</b><span>Interested in earning your teaching certification through Moreland University? If you're considering applying, you can use my referral link when you apply: <a href="${REFERRAL}" target="_blank" rel="noopener noreferrer">join.moreland.edu/mQTiPj6</a></span>
+  return `<aside class="ref-card ${where}" aria-label="Moreland University referral"><div class="ref-txt"><b>Becoming a teacher?</b><span>Interested in earning your teaching certification through Moreland University? If you're considering applying, you can use my referral link when you apply:</span>
+    <a class="ref-link" href="${REFERRAL}" target="_blank" rel="noopener noreferrer">join.moreland.edu/mQTiPj6 <span aria-hidden="true">↗</span></a>
     <small>Optional. Comma's resources are free either way. Comma isn't affiliated with Moreland University; this is a personal referral link.</small></div></aside>`;
 }
 const ICO = {
