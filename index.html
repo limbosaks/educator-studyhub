@@ -632,13 +632,23 @@ details.rv-psg .psg { position: static; max-height: 360px; margin-top: 8px; }
 .fface.back .txt { font-size: 18.5px; line-height: 1.5; }
 .card-nav { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; max-width: 680px; }
 .card-nav .count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); margin-right: auto; }
-.sheets { columns: 2 380px; column-gap: 32px; }
-.sheet { break-inside: avoid; margin: 0 0 26px; }
-.sheet h4 { font-family: var(--font-display); font-weight: 500; font-size: 20px; margin: 0 0 4px; }
-.sheet .sn { font-size: 13px; color: var(--muted); margin: 0 0 8px; font-style: italic; font-family: var(--font-display); }
+.sheet-tools { display: flex; align-items: center; gap: 14px; margin: 0 0 8px; } .sheet-tools span { flex: 1; }
+.sheets { border-top: 1px solid var(--ink); }
+.sheet { border-bottom: 1px solid var(--line); }
+.sheet > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 12px; padding: 14px 4px; }
+.sheet > summary::-webkit-details-marker { display: none; }
+.sheet > summary .sh-t { font-family: var(--font-display); font-weight: 500; font-size: 20px; }
+.sheet > summary small { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sheet > summary::after { content: "+"; margin-left: auto; font-family: var(--font-mono); font-size: 18px; color: var(--muted); }
+.sheet[open] > summary::after { content: "–"; color: var(--accent); }
+.sheet > summary:hover .sh-t { color: var(--accent); }
+.sheet[open] > summary { border-bottom: 2px solid var(--accent); }
+.sh-body { padding: 12px 4px 22px; max-width: 860px; }
+.sheet .sn { font-size: 14px; color: var(--muted); margin: 0 0 12px; font-style: italic; font-family: var(--font-display); }
 .sheet table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .sheet th { text-align: left; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 5px 6px; border-bottom: 1px solid var(--ink); }
-.sheet td { padding: 6px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.sheet td { padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.sheet th { padding: 6px 8px; } .sheet tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--sunk) 45%, transparent); }
 .sheet td:first-child { font-weight: 600; }
 
 /* about */
@@ -29102,7 +29112,7 @@ function renderLab() {
 }
 
 /* ═══════════ QUICK REVIEW ═══════════ */
-let RV = { deck: null, tab: 'cards', topic: 'all', order: [], i: 0, flip: false, known: new Set() };
+let RV = { openSheets: new Set(), deck: null, tab: 'cards', topic: 'all', order: [], i: 0, flip: false, known: new Set() };
 const deckOrder = () => DECKS.slice().sort((a, b) => { const ai = t => { const x = BY_ID[t.tests[0]]; const k = x ? (x.area === 'plt' ? 99 : AREAS.findIndex(z => z.k === x.area)) : 98; return k; }; return ai(a) - ai(b) || a.title.localeCompare(b.title); });
 function rvDeck() { return DECKS.find(d => d.id === RV.deck) || deckOrder()[0]; }
 function rvBuild(shuffle) {
@@ -29133,13 +29143,17 @@ function renderReview() {
             <div class="fface front"><span class="kind">Prompt</span>${card[2] ? `<span class="topic">${esc(card[2])}</span>` : ''}<div class="txt">${F(card[0])}</div></div>
             <div class="fface back"><span class="kind">Answer</span>${card[2] ? `<span class="topic">${esc(card[2])}</span>` : ''}<div class="txt">${F(card[1])}</div></div></div></div>
           <div class="card-nav"><span class="count">${RV.i + 1} / ${RV.order.length}</span><button class="btn quiet" id="rvPrev" ${RV.i === 0 ? 'disabled' : ''}>← Previous</button><button class="btn quiet" id="rvAgain">Review again</button><button class="btn" id="rvGot">Got it</button><button class="btn primary" id="rvNext">${RV.i === RV.order.length - 1 ? 'Start over' : 'Next →'}</button></div>` : '<p class="empty">No cards in this topic.</p>'}`
-        : `<div class="sheets">${(d.sheets || []).map(sh => `<section class="sheet"><h4>${esc(sh.title)}</h4>${sh.note ? `<p class="sn">${F(esc(sh.note))}</p>` : ''}<div class="tablewrap"><table><thead><tr>${sh.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${sh.rows.map(r => `<tr>${r.map(cell => `<td>${F(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>`).join('')}</div>`}
+        : `<div class="sheet-tools"><span class="small muted">Open a sheet to study it.</span><button class="linkbtn sm" id="shOpen">Open all</button><button class="linkbtn sm" id="shClose">Close all</button></div>
+          <div class="sheets">${(d.sheets || []).map((sh, si) => `<details class="sheet" data-sh="${d.id}:${si}" ${RV.openSheets.has(d.id + ':' + si) ? 'open' : ''}><summary><span class="sh-t">${esc(sh.title)}</span><small>${sh.rows.length} rows</small></summary><div class="sh-body">${sh.note ? `<p class="sn">${F(esc(sh.note))}</p>` : ''}<div class="tablewrap"><table><thead><tr>${sh.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${sh.rows.map(r => `<tr>${r.map(cell => `<td>${F(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div></details>`).join('')}</div>`}
       </div>
     </div>
     ${foot()}
   </div>`;
   $$('[data-deck]').forEach(b => b.onclick = () => { RV.deck = b.dataset.deck; LS.set('pp.ui.rv.deck', RV.deck); RV.topic = 'all'; rvBuild(false); renderReview(); bindNav(); });
   $$('[data-rvtab]').forEach(b => b.onclick = () => { RV.tab = b.dataset.rvtab; renderReview(); bindNav(); });
+  $$('details.sheet').forEach(dt => dt.addEventListener('toggle', () => { dt.open ? RV.openSheets.add(dt.dataset.sh) : RV.openSheets.delete(dt.dataset.sh); }));
+  if ($('#shOpen')) $('#shOpen').onclick = () => $$('details.sheet').forEach(dt => { dt.open = true; });
+  if ($('#shClose')) $('#shClose').onclick = () => $$('details.sheet').forEach(dt => { dt.open = false; });
   if (RV.tab !== 'cards' || !card) { if ($('#rvTopic')) { $('#rvTopic').onchange = () => { RV.topic = $('#rvTopic').value; rvBuild(false); renderReview(); bindNav(); }; } return; }
   const flip = () => { RV.flip = !RV.flip; $('#fcard').classList.toggle('flip', RV.flip); };
   const move = dlt => { const n = RV.i + dlt; if (n >= RV.order.length) { rvBuild(false); } else if (n >= 0) { RV.i = n; RV.flip = false; } renderReview(); bindNav(); };
