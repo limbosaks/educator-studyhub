@@ -211,8 +211,12 @@ p.lead { color: var(--muted); max-width: 62ch; margin: 0 0 22px; font-size: 17px
 .comm-list b { display: block; font-family: var(--font-display); font-size: 20px; font-weight: 500; }
 .comm-list span:not(.ic) { color: var(--muted); font-size: 14.5px; }
 @media (max-width: 760px) { .comm { grid-template-columns: 1fr; } }
-.accts ul { list-style: none; margin: 0; padding: 0; } .accts li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
-.accts .av { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-weight: 700; font-size: 13px; } .accts .em { flex: 1; min-width: 160px; font-weight: 600; word-break: break-all; }
+.accts ul { list-style: none; margin: 0; padding: 0; } .accts li { display: grid; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.acct-id { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; text-align: left; background: transparent; border: 1px solid transparent; padding: 6px 8px; margin: 0 -8px; cursor: pointer; color: var(--ink); font: inherit; }
+.acct-id:hover { border-color: var(--line); background: var(--paper); }
+.accts .av { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+.accts .em { min-width: 0; font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
+.acct-act { display: flex; align-items: center; gap: 14px; padding-left: 46px; }
 .ref-card { margin-top: 12px; padding: 12px 16px; border: 1px solid var(--line); border-left: 4px solid var(--cobalt); background: var(--surface); font-size: 14px; }
 .ref-card .ref-txt { display: grid; gap: 4px; } .ref-card b { font-size: 15px; } .ref-card span { color: var(--ink); }
 .ref-card a.ref-link { justify-self: start; display: inline-flex; gap: 6px; align-items: center; margin: 4px 0 2px; padding: 6px 12px; border: 1px solid var(--cobalt); color: var(--cobalt); font-weight: 600; text-decoration: none; white-space: nowrap; }
@@ -29577,7 +29581,7 @@ function renderGate(err) {
   $('#hub').innerHTML = `<div class="page gate"><div class="eyebrow">Comma</div><h1 class="display">Sign in</h1>
     <p class="lead">Sign in with your email and access code.</p>
     ${GATE_MSG ? `<p class="notice">${esc(GATE_MSG)}</p>` : ''}
-    ${(GUEST || !ACCT_EMAIL) && LS.get(ACCTS, []).length ? `<section class="panel accts"><h2>Accounts on this device</h2><ul>${LS.get(ACCTS, []).map(a => `<li><span class="av">${esc(initials(a.email))}</span><span class="em">${esc(a.email)}</span><button class="btn" data-acct="${esc(a.email)}">Use this account</button><button class="linkbtn sm" data-acctx="${esc(a.email)}">Remove</button></li>`).join('')}</ul><p class="small muted" style="margin:6px 0 0">Your access code isn't stored on this device. Choose your account, then enter this month's code.</p></section>` : ''}
+    ${(GUEST || !ACCT_EMAIL) && LS.get(ACCTS, []).length ? `<section class="panel accts"><h2>Accounts on this device</h2><ul>${LS.get(ACCTS, []).map(a => `<li><button class="acct-id" data-acct="${esc(a.email)}"><span class="av">${esc(initials(a.email))}</span><span class="em">${esc(a.email)}</span></button><div class="acct-act"><button class="btn" data-acct="${esc(a.email)}">Use this account</button><button class="linkbtn sm" data-acctx="${esc(a.email)}">Remove</button></div></li>`).join('')}</ul><p class="small muted" style="margin:6px 0 0">Your access code isn't stored on this device. Choose your account, then enter this month's code.</p></section>` : ''}
     <section class="panel"><form id="gForm" autocomplete="off">
       ${!GUEST && ACCT_EMAIL ? `<p class="small" style="margin:0">Signed in to Claude as <b>${esc(ACCT_EMAIL)}</b>. Access codes work only with the email they were issued to.</p>` : ''}
       <label>Email<input id="gName" type="email" maxlength="80" ${!GUEST && ACCT_EMAIL ? `value="${esc(ACCT_EMAIL)}" readonly` : (LS.get('pp.member.' + memberKey(), null) || {}).email ? `value="${esc(LS.get('pp.member.' + memberKey(), null).email)}"` : ''} placeholder="you@example.com" autocomplete="email"></label>
