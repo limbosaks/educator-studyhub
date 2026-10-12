@@ -28215,7 +28215,7 @@ const PLT_SOON = [
 const SITE_KEY = 'pp-0da28cd0a82cbf36cb8df9c60ae6c4b0', BRAND = 'Comma';
 const EMBED_REVOKED = [];
 /* standalone (no-backend) copy: per-person code version / lifetime flags, keyed by email hash. Updated when the site files are rebuilt. */
-const EMBED_ACCESS = {"emails":["4c7aed0180da6e5af67bb60bf5ae40e4dea5b02c84263622a7755dd758b6fe41","8b8bc242b08aaa4e94309c226ef5cd18fa75e6a760017c10ab3903aabaf63cf3","e00a807932c5094dabbdc9a94973af6853bc3c821e115f7801535f327331419c","38133ca6945f76174a58382a2c062083b62964a7e57dd2f62d604cf71145b7c1","ffb7074f723be12740db13597431deaddd7fcea85a7634d508205f17421934c2","0ea6b50598ec456bb077393c2025851b85b237f89f2bacad34c1cabc42a7ded9","f743b009412c676708753bdcf10500566ad30d86f9f8b882e7a63e5e9d43e7b8","a151992a586cd91ace3917e838d97a72982181f05421be00899de401d54d2f05","490d8d4dc82c6f1364361c02cbbfaedeac3dcfa9d5f2fcf8cf4d56a94d451e40","76cf3f520c5bdda7eee61882e7412ec6d3d87257507970557aa84482c3d42c99","79b7710322001061f457814db2171f8e9b2ad605369fa9f3ad416fd12fbfa75b","992ef7de6c4d59a8d52d427e24dcdd6509bb6cf49135a8fff53e47b4e038ac20","8a89b25325e8b7895f720253b95130ab1aebff9ae99f413e7d89dcc3f1b14854","747339b90bb22729f23ad91c2bffdb0c199426ebfee75657560f0d7d090464be","b403006cf762d169cf2364f08a78305cc623881811e1801bbb93e97e0a426b03","c9afef8753561e798664550778e791469f2f824958aa0c94f091377b8473e4eb","17b09c64c5f4707406906d0c57c87a0d4499bc3b223a0b1e62af9bcd17ffdcd9","c852fb8e1a63ff1ef9e572c842800306ec1c89fa50a20ce997e2ecc7c2da1a43","583c342be263f85d36cba2c50898070758a2f69edaf0741123296df934ec0dc4","c1b3aab50a021aa3e002a51b1a32197d8b264f446f397caf6379778a1429bdfd"],"lv":{"c1b3aab50a021aa3e002a51b1a32197d8b264f446f397caf6379778a1429bdfd":{"life":true,"v":0,"lk":"2026-10"}}};
+const EMBED_ACCESS = {"lv":{"c1b3aab50a021aa3e002a51b1a32197d8b264f446f397caf6379778a1429bdfd":{"life":true,"v":0,"lk":"2026-10"}},"off":[]};
 const EMBED_LV = (EMBED_ACCESS && EMBED_ACCESS.lv) || {};
 let ADMIN_ROLE = null, ACCT_EMAIL = null, GUEST = false, ROOM = null, ROOM_P = null, LIVE = [];
 /* live presence: each open page says only whether it is browsing or in a test; only the owner's page counts and shows it */
@@ -29538,7 +29538,7 @@ async function sessionOK(m) {
 }
 try { LS.del('pp.accounts'); } catch (e) {} /* the old 'accounts on this device' list is no longer used */
 async function guestValid(email, code) {
-  if (EMBED_ACCESS && (EMBED_ACCESS.emails || []).length && !EMBED_ACCESS.emails.includes(await emHash(email))) return false;
+  if (EMBED_ACCESS && (EMBED_ACCESS.off || []).includes(await emHash(email))) return false; /* turned off at the last rebuild */
   if (EMBED_REVOKED.includes(await sha256hex('rev|' + normEmail(email)))) return false;
   return codeOK(email, code);
 }
@@ -29547,7 +29547,7 @@ async function enterGuestGate() {
   GUEST = true; DB = null; WRITE_OK = false;
   const local = LS.get('pp.member.' + memberKey(), null);
   if (LS.get('pp.signedout.' + memberKey(), false)) { MODE = 'gate'; return; }
-  if (local && local.email && !EMBED_REVOKED.includes(await sha256hex('rev|' + normEmail(local.email))) && !(EMBED_ACCESS && (EMBED_ACCESS.emails || []).length && !EMBED_ACCESS.emails.includes(await emHash(local.email))) && await sessionOK(local)) { MEMBER = local; enterMember(); return; }
+  if (local && local.email && !EMBED_REVOKED.includes(await sha256hex('rev|' + normEmail(local.email))) && !(EMBED_ACCESS && (EMBED_ACCESS.off || []).includes(await emHash(local.email))) && await sessionOK(local)) { MEMBER = local; enterMember(); return; }
   if (local && local.email) GATE_MSG = 'Access codes change every month. Enter this month\'s code from the site owner to keep practicing — your scores are still here.';
   MODE = 'gate';
 }
