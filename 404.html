@@ -28215,7 +28215,7 @@ const PLT_SOON = [
 const SITE_KEY = 'pp-0da28cd0a82cbf36cb8df9c60ae6c4b0', BRAND = 'Comma';
 const EMBED_REVOKED = [];
 /* standalone (no-backend) copy: per-person code version / lifetime flags, keyed by email hash. Updated when the site files are rebuilt. */
-const EMBED_ACCESS = {"emails":["4c7aed0180da6e5af67bb60bf5ae40e4dea5b02c84263622a7755dd758b6fe41","8b8bc242b08aaa4e94309c226ef5cd18fa75e6a760017c10ab3903aabaf63cf3","e00a807932c5094dabbdc9a94973af6853bc3c821e115f7801535f327331419c","38133ca6945f76174a58382a2c062083b62964a7e57dd2f62d604cf71145b7c1","ffb7074f723be12740db13597431deaddd7fcea85a7634d508205f17421934c2","0ea6b50598ec456bb077393c2025851b85b237f89f2bacad34c1cabc42a7ded9","f743b009412c676708753bdcf10500566ad30d86f9f8b882e7a63e5e9d43e7b8","a151992a586cd91ace3917e838d97a72982181f05421be00899de401d54d2f05","490d8d4dc82c6f1364361c02cbbfaedeac3dcfa9d5f2fcf8cf4d56a94d451e40","76cf3f520c5bdda7eee61882e7412ec6d3d87257507970557aa84482c3d42c99","79b7710322001061f457814db2171f8e9b2ad605369fa9f3ad416fd12fbfa75b","992ef7de6c4d59a8d52d427e24dcdd6509bb6cf49135a8fff53e47b4e038ac20","8a89b25325e8b7895f720253b95130ab1aebff9ae99f413e7d89dcc3f1b14854","747339b90bb22729f23ad91c2bffdb0c199426ebfee75657560f0d7d090464be","b403006cf762d169cf2364f08a78305cc623881811e1801bbb93e97e0a426b03","c9afef8753561e798664550778e791469f2f824958aa0c94f091377b8473e4eb","17b09c64c5f4707406906d0c57c87a0d4499bc3b223a0b1e62af9bcd17ffdcd9","c852fb8e1a63ff1ef9e572c842800306ec1c89fa50a20ce997e2ecc7c2da1a43","583c342be263f85d36cba2c50898070758a2f69edaf0741123296df934ec0dc4","c1b3aab50a021aa3e002a51b1a32197d8b264f446f397caf6379778a1429bdfd"],"lv":{"c1b3aab50a021aa3e002a51b1a32197d8b264f446f397caf6379778a1429bdfd":{"life":true,"v":0}}};
+const EMBED_ACCESS = {"emails":["4c7aed0180da6e5af67bb60bf5ae40e4dea5b02c84263622a7755dd758b6fe41","8b8bc242b08aaa4e94309c226ef5cd18fa75e6a760017c10ab3903aabaf63cf3","e00a807932c5094dabbdc9a94973af6853bc3c821e115f7801535f327331419c","38133ca6945f76174a58382a2c062083b62964a7e57dd2f62d604cf71145b7c1","ffb7074f723be12740db13597431deaddd7fcea85a7634d508205f17421934c2","0ea6b50598ec456bb077393c2025851b85b237f89f2bacad34c1cabc42a7ded9","f743b009412c676708753bdcf10500566ad30d86f9f8b882e7a63e5e9d43e7b8","a151992a586cd91ace3917e838d97a72982181f05421be00899de401d54d2f05","490d8d4dc82c6f1364361c02cbbfaedeac3dcfa9d5f2fcf8cf4d56a94d451e40","76cf3f520c5bdda7eee61882e7412ec6d3d87257507970557aa84482c3d42c99","79b7710322001061f457814db2171f8e9b2ad605369fa9f3ad416fd12fbfa75b","992ef7de6c4d59a8d52d427e24dcdd6509bb6cf49135a8fff53e47b4e038ac20","8a89b25325e8b7895f720253b95130ab1aebff9ae99f413e7d89dcc3f1b14854","747339b90bb22729f23ad91c2bffdb0c199426ebfee75657560f0d7d090464be","b403006cf762d169cf2364f08a78305cc623881811e1801bbb93e97e0a426b03","c9afef8753561e798664550778e791469f2f824958aa0c94f091377b8473e4eb","17b09c64c5f4707406906d0c57c87a0d4499bc3b223a0b1e62af9bcd17ffdcd9","c852fb8e1a63ff1ef9e572c842800306ec1c89fa50a20ce997e2ecc7c2da1a43","583c342be263f85d36cba2c50898070758a2f69edaf0741123296df934ec0dc4","c1b3aab50a021aa3e002a51b1a32197d8b264f446f397caf6379778a1429bdfd"],"lv":{"c1b3aab50a021aa3e002a51b1a32197d8b264f446f397caf6379778a1429bdfd":{"life":true,"v":0,"lk":"2026-10"}}};
 const EMBED_LV = (EMBED_ACCESS && EMBED_ACCESS.lv) || {};
 let ADMIN_ROLE = null, ACCT_EMAIL = null, GUEST = false, ROOM = null, ROOM_P = null, LIVE = [];
 /* live presence: each open page says only whether it is browsing or in a test; only the owner's page counts and shows it */
@@ -29518,9 +29518,9 @@ const kstDay = () => new Date(Date.now() + 9 * 3600e3).getUTCDate();
 const monthName = mk => new Date(Date.UTC(+mk.slice(0, 4), +mk.slice(5) - 1, 15)).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 async function accInfo(email) { const h = await emHash(email); return DB && !GUEST ? (ACCESS_DOC.lv || {})[h] || {} : EMBED_LV[h] || {}; }
 const monthCode = (email, mk, v) => derivedCode(email, v ? mk + '#' + v : mk);
-const lifeCode = (email, v) => derivedCode(email, 'life' + (v || 0));
+const lifeCode = (email, v, lk) => lk ? monthCode(email, lk, v) : derivedCode(email, 'life' + (v || 0));
 /* every code that unlocks this email right now: this month's (and last month's through the 3rd), plus a lifetime code if granted */
-async function validCodes(email) { const i = await accInfo(email); const out = [await monthCode(email, monthKey(), i.v)]; if (kstDay() <= 3) out.push(await monthCode(email, monthKey(-1), i.v)); if (i.life) out.push(await lifeCode(email, i.v)); return out.map(normCode); }
+async function validCodes(email) { const i = await accInfo(email); const out = [await monthCode(email, monthKey(), i.v)]; if (kstDay() <= 3) out.push(await monthCode(email, monthKey(-1), i.v)); if (i.life) out.push(await lifeCode(email, i.v, i.lk)); return out.map(normCode); }
 async function codeOK(email, code) { return (await validCodes(email)).includes(normCode(code)); }
 const emHash = email => sha256hex('em|' + normEmail(email));
 async function emailActive(email) { return ACCESS_DOC.emails.includes(await emHash(email)); }
@@ -29671,7 +29671,7 @@ function openReport(ctx, kind0) {
 }
 
 /* ── owner dashboard ── */
-let ADM = { tab: 'members', codes: [], members: [], reports: [], names: {}, loaded: false, err: '', open: {}, sel: new Set() };
+let ADM = { tab: 'codes', codes: [], members: [], reports: [], names: {}, loaded: false, err: '', open: {}, sel: new Set() };
 async function admLoad() {
   ADM.err = '';
   const get = async p => { try { const s = await DB.doc(p).get(); return s.exists ? thaw(s.data()) : null; } catch (e) { return null; } };
@@ -29689,12 +29689,12 @@ async function admLoad() {
   if (want !== ACCESS_DOC.emails.slice().sort().join()) { try { await admSaveCodes(); } catch (e) {} }
   ADM.loaded = true; await liveTagMap();
 }
-async function admRecalc() { ADM.cur = {}; ADM.next = {}; ADM.life = {}; for (const c of ADM.codes) if (c.email) { ADM.cur[c.email] = await monthCode(c.email, monthKey(), c.v); ADM.next[c.email] = await monthCode(c.email, monthKey(1), c.v); if (c.life) ADM.life[c.email] = await lifeCode(c.email, c.v); } }
+async function admRecalc() { ADM.cur = {}; ADM.next = {}; ADM.life = {}; for (const c of ADM.codes) if (c.email) { ADM.cur[c.email] = await monthCode(c.email, monthKey(), c.v); ADM.next[c.email] = await monthCode(c.email, monthKey(1), c.v); if (c.life) ADM.life[c.email] = await lifeCode(c.email, c.v, c.lk); } }
 async function admSaveCodes() {
   await DB.doc('admin/codes').set({ items: ADM.codes });
   ACCESS_DOC.list = ADM.codes.filter(c => !c.revoked).map(c => c.hash);
   ACCESS_DOC.emails = await Promise.all(ADM.codes.filter(c => !c.revoked && c.email).map(c => emHash(c.email)));
-  const lv = {}; for (const c of ADM.codes) if (!c.revoked && c.email && (c.v || c.life)) lv[await emHash(c.email)] = { v: c.v || 0, life: !!c.life }; ACCESS_DOC.lv = lv;
+  const lv = {}; for (const c of ADM.codes) if (!c.revoked && c.email && (c.v || c.life)) lv[await emHash(c.email)] = c.life && c.lk ? { v: c.v || 0, life: true, lk: c.lk } : { v: c.v || 0, life: !!c.life }; ACCESS_DOC.lv = lv;
   await DB.doc('access/codes').set({ list: ACCESS_DOC.list, removed: ACCESS_DOC.removed, emails: ACCESS_DOC.emails, lv: ACCESS_DOC.lv || {} });
   ACCESS = new Set(ACCESS_DOC.list);
 }
@@ -29729,7 +29729,7 @@ ${OWNER_EMAIL}` };
 async function openCodeMail(emails, mk) {
   if (!emails.length) return;
   mk = mk || mailMonth(); const site = LS.get('pp.admin.siteurl', 'https://www.comma-ltd.com');
-  const items = await Promise.all(emails.map(async e => { const c = ADM.codes.find(x => x.email === e) || {}; return { e, life: !!c.life, code: c.life ? await lifeCode(e, c.v) : await monthCode(e, mk, c.v) }; }));
+  const items = await Promise.all(emails.map(async e => { const c = ADM.codes.find(x => x.email === e) || {}; return { e, life: !!c.life, code: c.life ? await lifeCode(e, c.v, c.lk) : await monthCode(e, mk, c.v) }; }));
   const sent = mailSent(mk);
   $('#modal-root').innerHTML = `<div class="scrim" id="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cmT"><div class="mhead"><h3 id="cmT">Email ${emails.length === 1 ? 'access code' : emails.length + ' access codes'}</h3><button class="btn" id="cmClose">Close</button></div>
     <div class="mbody">
@@ -29759,7 +29759,8 @@ const ago = iso => { if (!iso) return '—'; const d = (Date.now() - new Date(is
 function renderAdmin() {
   setAccent(null); show('hub');
   const open = ADM.reports.filter(r => !r.resolved).length;
-  const tabs = [['members', `Members (${ADM.members.length})`], ['codes', `Access (${ADM.codes.filter(c => !c.revoked).length})`], ['invite', 'How to invite']];
+  if (ADM.tab !== 'codes' && ADM.tab !== 'invite') ADM.tab = 'codes';
+  const tabs = [['codes', `Access (${ADM.codes.filter(c => !c.revoked).length})`], ['invite', 'How to invite']];
   $('#hub').innerHTML = nav('admin') + `<div class="page">
     <div class="eyebrow">Only you can see this page</div><h1 class="display">Admin</h1>
     <p class="lead">Give people access, see who's online, and follow members' progress.</p>
@@ -29779,7 +29780,7 @@ function accSection(kind) {
   const allSel = act.length && act.every(c => ADM.sel.has(c.email)), mk = mailMonth();
   const head = life ? `<h2>People with lifetime access · ${act.length}</h2><p class="small muted" style="margin-top:0">Their codes never change. Use "Reset code" if someone forgets theirs or it gets shared.</p>`
     : `<h2>People with monthly access · ${act.length}</h2><p class="small muted" style="margin-top:0">Their codes change on the 1st of every month (Korea time); last month's code keeps working through the 3rd.</p>`;
-  if (!list.length) return `<section class="panel acc-box ${life ? 'life-box' : ''}" style="margin-top:16px">${head}<div class="empty">${life ? 'No one has a lifetime code yet. Tick "Give a lifetime code" when you add someone, or use "Give lifetime code" in the monthly list below.' : 'No one is on monthly codes. Add a person above.'}</div></section>`;
+  if (!list.length) return `<section class="panel acc-box ${life ? 'life-box' : ''}" style="margin-top:16px">${head}<div class="empty">${life ? 'No one has a lifetime code yet. Tick "Give a lifetime code" when you add someone, or use "Make lifetime" in the monthly list below; they keep the code they already have.' : 'No one is on monthly codes. Add a person above.'}</div></section>`;
   const rows = list.map(c => {
     const n = ADM.members.filter(m => !m.imported && normEmail(m.email || m.name || '') === normEmail(c.email || '')).length;
     const cur = (ADM.cur || {})[c.email] || '…', nxt = (ADM.next || {})[c.email] || '…', lc = (ADM.life || {})[c.email] || '…';
@@ -29789,7 +29790,7 @@ function accSection(kind) {
     return `<tr><td class="cbx">${!c.revoked && c.email ? `<input type="checkbox" data-csel="${esc(c.email)}" aria-label="Select ${esc(c.email)}" ${ADM.sel.has(c.email) ? 'checked' : ''}>` : ''}</td>
       <td><b>${esc(c.email || c.label || '—')}</b><br><small class="muted">added ${fmtDate(c.created)}</small>${sent ? `<br><span class="st-on small">✓ ${life ? 'code' : esc(monthName(mk).split(' ')[0]) + ' code'} emailed</span>` : ''}</td>
       ${codeCells}<td class="mono">${n ? 'Yes' : 'Not yet'}</td><td>${c.revoked ? '<span class="st-off">Turned off</span>' : '<span class="st-on">Active</span>'}</td>
-      <td><div class="row" style="gap:6px">${!c.revoked && c.email ? `<button class="btn" data-cem="${esc(c.email)}">✉ Email</button><button class="btn" data-crs="${c.hash}">Reset code</button><button class="btn quiet" data-clife="${c.hash}">${life ? 'Switch to monthly' : 'Give lifetime code'}</button>` : ''}${c.revoked ? `<button class="btn" data-cre="${c.hash}">Turn on</button><button class="btn danger" data-cdel="${c.hash}">Delete</button>` : `<button class="btn danger" data-crev="${c.hash}">Turn off</button>`}</div></td></tr>`; }).join('');
+      <td><div class="row" style="gap:6px">${!c.revoked && c.email ? `<button class="btn" data-cem="${esc(c.email)}">✉ Email</button><button class="btn" data-crs="${c.hash}">Reset code</button><button class="btn quiet" data-clife="${c.hash}" title="${life ? 'Back to a new code each month' : 'Keeps their current code and stops it from changing'}">${life ? 'Switch to monthly' : 'Make lifetime'}</button>` : ''}${c.revoked ? `<button class="btn" data-cre="${c.hash}">Turn on</button><button class="btn danger" data-cdel="${c.hash}">Delete</button>` : `<button class="btn danger" data-crev="${c.hash}">Turn off</button>`}</div></td></tr>`; }).join('');
   const nSel = act.filter(c => ADM.sel.has(c.email)).length;
   return `<section class="panel acc-box ${life ? 'life-box' : ''}" style="margin-top:16px">${head}
     <div class="mail-bar"><label class="chk"><input type="checkbox" data-ceall="${kind}" ${allSel ? 'checked' : ''}> Select all</label><button class="btn primary" data-cesel="${kind}" ${nSel ? '' : 'disabled'}>✉ Email code${nSel === 1 ? '' : 's'} to selected (${nSel})</button>${life ? '' : `<span class="small muted">Sent this month: ${act.filter(c => mailSent(mk)[c.email]).length} of ${act.length}</span>`}</div>
@@ -29845,11 +29846,13 @@ function admBind() {
     if (!isEmail(email)) return err('Enter a valid email address.');
     if (ADM.codes.some(c => !c.revoked && normEmail(c.email || '') === email)) return err('This email already has an active access code. Turn it off first to give them a new one.');
     const life = $('#cLife') && $('#cLife').checked;
-    ADM.codes.push({ email, label: email, hash: await emHash(email), monthly: !life, life, v: 0, created: new Date().toISOString() });
+    ADM.codes.push({ email, label: email, hash: await emHash(email), monthly: !life, life, v: 0, created: new Date().toISOString(), ...(life ? { lk: monthKey() } : {}) });
     await admRecalc(); await guard(admSaveCodes, `Added ${email} · ${life ? 'lifetime code ' + ADM.life[email] : 'code ' + ADM.cur[email]}`); };
   $$('[data-crs]').forEach(b => b.onclick = () => { const c = ADM.codes.find(x => x.hash === b.dataset.crs); confirmBox(`Reset ${c.email}'s code?`, `They get a new ${c.life ? 'lifetime' : 'monthly'} code, and their current code stops working right away on the Claude site (anyone already signed in with it is signed out). Next, send them the new code.`, 'Reset code', async () => {
     c.v = (c.v || 0) + 1; await admRecalc(); await guard(admSaveCodes, `New code for ${c.email}: ${c.life ? ADM.life[c.email] : ADM.cur[c.email]}`); openCodeMail([c.email]); }); });
-  $$('[data-clife]').forEach(b => b.onclick = async () => { const c = ADM.codes.find(x => x.hash === b.dataset.clife); c.life = !c.life; c.monthly = !c.life; await admRecalc(); await guard(admSaveCodes, c.life ? `Lifetime code for ${c.email}: ${ADM.life[c.email]}` : `${c.email} is back on monthly codes`); });
+  $$('[data-clife]').forEach(b => b.onclick = async () => { const c = ADM.codes.find(x => x.hash === b.dataset.clife); c.life = !c.life; c.monthly = !c.life;
+    if (c.life) c.lk = monthKey(); else delete c.lk; /* their current code becomes their lifetime code */
+    await admRecalc(); await guard(admSaveCodes, c.life ? `${c.email} is now lifetime. Their code stays ${ADM.life[c.email]}.` : `${c.email} is back on monthly codes`); });
   formFix('#cForm');
   $$('[data-csel]').forEach(b => b.onchange = () => { b.checked ? ADM.sel.add(b.dataset.csel) : ADM.sel.delete(b.dataset.csel); redo(); });
   const grp = k => ADM.codes.filter(c => !c.revoked && c.email && !!c.life === (k === 'life')).map(c => c.email);
