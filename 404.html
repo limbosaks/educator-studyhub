@@ -632,6 +632,10 @@ details.rv-psg .psg { position: static; max-height: 360px; margin-top: 8px; }
 .fface.back .txt { font-size: 18.5px; line-height: 1.5; }
 .card-nav { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; max-width: 680px; }
 .card-nav .count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); margin-right: auto; }
+.pw-wrap { display: flex; align-items: center; gap: 8px; } .pw-wrap input { flex: 1; min-width: 0; }
+.life-list { list-style: none; margin: 0; padding: 0; } .life-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding: 8px 0; border-bottom: 1px solid var(--line); } .life-list .em { flex: 1; min-width: 180px; font-weight: 600; overflow-wrap: anywhere; }
+.life-box { border-left: 4px solid var(--cobalt); }
+.fc-done { text-align: center; padding: 28px 16px; } .fc-done p { margin: 0 0 8px; }
 .sheet-tools { display: flex; align-items: center; gap: 14px; margin: 0 0 8px; } .sheet-tools span { flex: 1; }
 .sheets { border-top: 1px solid var(--ink); }
 .sheet { border-bottom: 1px solid var(--line); }
@@ -28210,6 +28214,8 @@ const PLT_SOON = [
    each person's code is made from their email, SITE_KEY and the current month (Korea time), so codes change on the 1st of every month. */
 const SITE_KEY = 'pp-0da28cd0a82cbf36cb8df9c60ae6c4b0', BRAND = 'Comma';
 const EMBED_REVOKED = [];
+/* standalone (no-backend) copy: per-person code version / lifetime flags, keyed by email hash. Updated when the site files are rebuilt. */
+const EMBED_LV = {};
 let ADMIN_ROLE = null, ACCT_EMAIL = null, GUEST = false, ROOM = null, ROOM_P = null, LIVE = [];
 /* live presence: each open page says only whether it is browsing or in a test; only the owner's page counts and shows it */
 let LIVE_TAG = null;
@@ -29115,15 +29121,21 @@ function renderLab() {
 let RV = { openSheets: new Set(), deck: null, tab: 'cards', topic: 'all', order: [], i: 0, flip: false, known: new Set() };
 const deckOrder = () => DECKS.slice().sort((a, b) => { const ai = t => { const x = BY_ID[t.tests[0]]; const k = x ? (x.area === 'plt' ? 99 : AREAS.findIndex(z => z.k === x.area)) : 98; return k; }; return ai(a) - ai(b) || a.title.localeCompare(b.title); });
 function rvDeck() { return DECKS.find(d => d.id === RV.deck) || deckOrder()[0]; }
+const rvKnownKey = () => `pp.${PID || 'anon'}.rv.known`;
+function rvLoadKnown() { if (RV.kp === (PID || 'anon')) return; RV.kp = PID || 'anon'; const o = LS.get(rvKnownKey(), {}); RV.known = new Set(Object.entries(o).flatMap(([dk, arr]) => arr.map(i => dk + ':' + i))); }
+function rvSaveKnown() { const o = {}; RV.known.forEach(k => { const j = k.lastIndexOf(':'); const dk = k.slice(0, j); (o[dk] = o[dk] || []).push(+k.slice(j + 1)); }); LS.set(rvKnownKey(), o); }
 function rvBuild(shuffle) {
-  const d = rvDeck(); let idx = d.cards.map((c, i) => i).filter(i => RV.topic === 'all' || d.cards[i][2] === RV.topic);
+  rvLoadKnown();
+  const d = rvDeck(); let idx = d.cards.map((c, i) => i).filter(i => (RV.topic === 'all' || d.cards[i][2] === RV.topic) && !RV.known.has(d.id + ':' + i));
   if (shuffle) R.shuf(idx); RV.order = idx; RV.i = 0; RV.flip = false;
 }
 function renderReview() {
   setAccent(null); show('hub');
   if (!RV.deck) { RV.deck = LS.get('pp.ui.rv.deck', null) || (deckOrder()[0] || {}).id; rvBuild(false); }
   const d = rvDeck(); if (!d) { $('#hub').innerHTML = nav('review') + '<div class="page"><p class="empty">No review decks yet.</p></div>'; return; }
-  if (!RV.order.length && d.cards.length) rvBuild(false);
+  rvLoadKnown(); if (!RV.order.length && d.cards.length) rvBuild(false);
+  const inTopic = d.cards.map((c, i) => i).filter(i => RV.topic === 'all' || d.cards[i][2] === RV.topic);
+  const gotN = inTopic.filter(i => RV.known.has(d.id + ':' + i)).length, deckGot = d.cards.filter((c, i) => RV.known.has(d.id + ':' + i)).length;
   const topics = [...new Set(d.cards.map(c => c[2]).filter(Boolean))];
   const ci = RV.order[RV.i], card = d.cards[ci];
   const firstTest = BY_ID[d.tests[0]];
@@ -29138,11 +29150,11 @@ function renderReview() {
         <div class="qr-tabs" role="tablist"><button role="tab" data-rvtab="cards" aria-selected="${RV.tab === 'cards'}">Flashcards · ${d.cards.length}</button><button role="tab" data-rvtab="sheets" aria-selected="${RV.tab === 'sheets'}">Memorization sheets · ${(d.sheets || []).length}</button></div>
         ${RV.tab === 'cards' ? `
           <div class="card-tools"><select id="rvTopic" aria-label="Topic"><option value="all">All topics</option>${topics.map(t => `<option ${t === RV.topic ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>
-            <button class="btn quiet" id="rvShuf">Shuffle</button><span class="small muted">${RV.known.size ? `${[...RV.known].filter(k => k.startsWith(d.id + ':')).length} marked "got it" this session` : 'Click the card or press Space to flip. Arrow keys move.'}</span></div>
+            <button class="btn quiet" id="rvShuf">Shuffle</button><span class="small muted">${deckGot ? `${deckGot} of ${d.cards.length} set aside as "got it"` : 'Click the card or press Space to flip. Arrow keys move.'}</span>${deckGot ? `<button class="btn quiet" id="rvReset">Reset pile</button>` : ''}</div>
           ${card ? `<div class="fcard ${RV.flip ? 'flip' : ''}" id="fcard" tabindex="0" role="button" aria-label="Flashcard. Activate to flip."><div class="fcard-in">
             <div class="fface front"><span class="kind">Prompt</span>${card[2] ? `<span class="topic">${esc(card[2])}</span>` : ''}<div class="txt">${F(card[0])}</div></div>
             <div class="fface back"><span class="kind">Answer</span>${card[2] ? `<span class="topic">${esc(card[2])}</span>` : ''}<div class="txt">${F(card[1])}</div></div></div></div>
-          <div class="card-nav"><span class="count">${RV.i + 1} / ${RV.order.length}</span><button class="btn quiet" id="rvPrev" ${RV.i === 0 ? 'disabled' : ''}>← Previous</button><button class="btn quiet" id="rvAgain">Review again</button><button class="btn" id="rvGot">Got it</button><button class="btn primary" id="rvNext">${RV.i === RV.order.length - 1 ? 'Start over' : 'Next →'}</button></div>` : '<p class="empty">No cards in this topic.</p>'}`
+          <div class="card-nav"><span class="count">${RV.i + 1} / ${RV.order.length}${gotN ? ` <small class="muted">· ${gotN} got it</small>` : ''}</span><button class="btn quiet" id="rvPrev" ${RV.i === 0 ? 'disabled' : ''}>← Previous</button><button class="btn quiet" id="rvAgain">Review again</button><button class="btn" id="rvGot">Got it</button><button class="btn primary" id="rvNext">${RV.i === RV.order.length - 1 ? 'Start over' : 'Next →'}</button></div>` : gotN ? `<div class="empty fc-done"><p><b>Nice work: you've set aside all ${gotN} card${gotN > 1 ? 's' : ''} ${RV.topic === 'all' ? 'in this deck' : 'in this topic'}.</b></p><p>Reset the pile to study them again.</p><button class="btn primary" id="rvReset2">Reset pile</button></div>` : '<p class="empty">No cards in this topic.</p>'}`
         : `<div class="sheet-tools"><span class="small muted">Open a sheet to study it.</span><button class="linkbtn sm" id="shOpen">Open all</button><button class="linkbtn sm" id="shClose">Close all</button></div>
           <div class="sheets">${(d.sheets || []).map((sh, si) => `<details class="sheet" data-sh="${d.id}:${si}" ${RV.openSheets.has(d.id + ':' + si) ? 'open' : ''}><summary><span class="sh-t">${esc(sh.title)}</span><small>${sh.rows.length} rows</small></summary><div class="sh-body">${sh.note ? `<p class="sn">${F(esc(sh.note))}</p>` : ''}<div class="tablewrap"><table><thead><tr>${sh.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${sh.rows.map(r => `<tr>${r.map(cell => `<td>${F(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div></details>`).join('')}</div>`}
       </div>
@@ -29154,6 +29166,8 @@ function renderReview() {
   $$('details.sheet').forEach(dt => dt.addEventListener('toggle', () => { dt.open ? RV.openSheets.add(dt.dataset.sh) : RV.openSheets.delete(dt.dataset.sh); }));
   if ($('#shOpen')) $('#shOpen').onclick = () => $$('details.sheet').forEach(dt => { dt.open = true; });
   if ($('#shClose')) $('#shClose').onclick = () => $$('details.sheet').forEach(dt => { dt.open = false; });
+  const reset = () => { [...RV.known].filter(k => k.startsWith(d.id + ':')).forEach(k => RV.known.delete(k)); rvSaveKnown(); rvBuild(false); renderReview(); bindNav(); };
+  if ($('#rvReset')) $('#rvReset').onclick = reset; if ($('#rvReset2')) $('#rvReset2').onclick = reset;
   if (RV.tab !== 'cards' || !card) { if ($('#rvTopic')) { $('#rvTopic').onchange = () => { RV.topic = $('#rvTopic').value; rvBuild(false); renderReview(); bindNav(); }; } return; }
   const flip = () => { RV.flip = !RV.flip; $('#fcard').classList.toggle('flip', RV.flip); };
   const move = dlt => { const n = RV.i + dlt; if (n >= RV.order.length) { rvBuild(false); } else if (n >= 0) { RV.i = n; RV.flip = false; } renderReview(); bindNav(); };
@@ -29161,7 +29175,7 @@ function renderReview() {
   $('#rvTopic').onchange = () => { RV.topic = $('#rvTopic').value; rvBuild(false); renderReview(); bindNav(); };
   $('#rvShuf').onclick = () => { rvBuild(true); renderReview(); bindNav(); };
   $('#rvPrev').onclick = () => move(-1); $('#rvNext').onclick = () => move(1);
-  $('#rvGot').onclick = () => { RV.known.add(d.id + ':' + ci); move(1); };
+  $('#rvGot').onclick = () => { RV.known.add(d.id + ':' + ci); rvSaveKnown(); RV.order = RV.order.filter(i => i !== ci); if (RV.i >= RV.order.length) RV.i = 0; RV.flip = false; renderReview(); bindNav(); };
   $('#rvAgain').onclick = () => { RV.order.push(ci); move(1); };
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && ROUTE === 'lab' && LAB.closeCoach && !$('#modal-root').innerHTML) LAB.closeCoach(); });
@@ -29460,15 +29474,15 @@ function newCode() { const r = (window.crypto && crypto.getRandomValues) ? crypt
 const normEmail = e => String(e).trim().toLowerCase();
 const isEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normEmail(e));
 const accessHash = (email, code) => sha256hex(normEmail(email) + '|' + normCode(code) + SALT);
-let ACCESS_DOC = { list: [], removed: [], emails: [] };
+let ACCESS_DOC = { list: [], removed: [], emails: [], lv: {} };
 const memberKey = () => UID || LS.get('pp.localId', null) || (() => { const k = 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); LS.set('pp.localId', k); return k; })();
 const memberPath = () => UID ? `members/${UID}` : `inbox/${memberKey()}`;
 const reportPath = () => MODE === 'owner' ? 'reports/_owner' : UID ? `reports/${UID}` : `rinbox/${memberKey()}`;
 const isRejected = e => e && (e.code === 'invalid_argument' || e.code === 'not_granted' || e.code === 'revoked');
 
 async function loadAccess() {
-  try { const s = await DB.doc('access/codes').get(); const d = s.exists ? thaw(s.data()) : {}; ACCESS_DOC = { list: d.list || [], removed: d.removed || [], emails: d.emails || [] }; }
-  catch (e) { ACCESS_DOC = { list: [], removed: [], emails: [] }; }
+  try { const s = await DB.doc('access/codes').get(); const d = s.exists ? thaw(s.data()) : {}; ACCESS_DOC = { list: d.list || [], removed: d.removed || [], emails: d.emails || [], lv: d.lv || {} }; }
+  catch (e) { ACCESS_DOC = { list: [], removed: [], emails: [], lv: {} }; }
   ACCESS = new Set(ACCESS_DOC.list);
 }
 async function initAuth() {
@@ -29501,7 +29515,12 @@ async function initAuth() {
 function monthKey(off = 0) { const d = new Date(Date.now() + 9 * 3600e3); const t = d.getUTCFullYear() * 12 + d.getUTCMonth() + off; return Math.floor(t / 12) + '-' + String(t % 12 + 1).padStart(2, '0'); }
 const kstDay = () => new Date(Date.now() + 9 * 3600e3).getUTCDate();
 const monthName = mk => new Date(Date.UTC(+mk.slice(0, 4), +mk.slice(5) - 1, 15)).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
-async function codeOK(email, code) { const c = normCode(code); if (c === normCode(await derivedCode(email))) return true; return kstDay() <= 3 && c === normCode(await derivedCode(email, monthKey(-1))); }
+async function accInfo(email) { const h = await emHash(email); return (ACCESS_DOC.lv && ACCESS_DOC.lv[h]) || EMBED_LV[h] || {}; }
+const monthCode = (email, mk, v) => derivedCode(email, v ? mk + '#' + v : mk);
+const lifeCode = (email, v) => derivedCode(email, 'life' + (v || 0));
+/* every code that unlocks this email right now: this month's (and last month's through the 3rd), plus a lifetime code if granted */
+async function validCodes(email) { const i = await accInfo(email); const out = [await monthCode(email, monthKey(), i.v)]; if (kstDay() <= 3) out.push(await monthCode(email, monthKey(-1), i.v)); if (i.life) out.push(await lifeCode(email, i.v)); return out.map(normCode); }
+async function codeOK(email, code) { return (await validCodes(email)).includes(normCode(code)); }
 const emHash = email => sha256hex('em|' + normEmail(email));
 async function emailActive(email) { return ACCESS_DOC.emails.includes(await emHash(email)); }
 async function derivedCode(email, mk = monthKey()) { const h = await sha256hex(SITE_KEY + '|' + normEmail(email) + '|' + mk); let c = ''; for (let i = 0; i < 8; i++) { if (i === 4) c += '-'; c += CODE_ABC[parseInt(h.slice(i * 4, i * 4 + 4), 16) % CODE_ABC.length]; } return c; }
@@ -29509,16 +29528,14 @@ async function derivedCode(email, mk = monthKey()) { const h = await sha256hex(S
    matches this month's code for that email (plus the 3-day grace) and for 30 days after the last sign-in. */
 const SESSION_DAYS = 30;
 const ckOf = (email, code) => sha256hex('ck|' + SITE_KEY + '|' + normEmail(email) + '|' + normCode(code));
-async function ckOK(email, ck) { if (!ck) return false; if (ck === await ckOf(email, await derivedCode(email))) return true; return kstDay() <= 3 && ck === await ckOf(email, await derivedCode(email, monthKey(-1))); }
+async function ckOK(email, ck) { if (!ck) return false; for (const c of await validCodes(email)) if (ck === await ckOf(email, c)) return true; return false; }
 async function sessionOK(m) {
   if (!m || !m.email) return false;
   if (m.code && !m.ck) { m.ck = await ckOf(m.email, m.code); delete m.code; }
   if (m.exp && Date.parse(m.exp) < Date.now()) return false;
   return ckOK(m.email, m.ck);
 }
-const ACCTS = 'pp.accounts';
-const rememberAcct = email => { const a = LS.get(ACCTS, []).filter(x => x.email !== email); a.unshift({ email, last: new Date().toISOString() }); LS.set(ACCTS, a.slice(0, 5)); };
-const forgetAcct = email => { LS.set(ACCTS, LS.get(ACCTS, []).filter(x => x.email !== email)); const m = LS.get('pp.member.' + memberKey(), null); if (m && m.email === email) LS.del('pp.member.' + memberKey()); };
+try { LS.del('pp.accounts'); } catch (e) {} /* the old 'accounts on this device' list is no longer used */
 async function guestValid(email, code) {
   if (EMBED_REVOKED.includes(await sha256hex('rev|' + normEmail(email)))) return false;
   return codeOK(email, code);
@@ -29542,21 +29559,16 @@ function memberPID(email) {
 }
 function signOut() {
   const email = MEMBER && MEMBER.email;
-  confirmBox('Sign out?', 'Your scores stay saved in this browser. Next time, pick your account and enter your current access code.', 'Sign out', () => {
-    const forget = SO_FORGET;
+  confirmBox('Sign out?', 'Your scores stay saved in this browser. Next time, sign in with your email and code (your browser can fill them in).', 'Sign out', () => {
     leaveExam(); LS.set('pp.signedout.' + memberKey(), true); const m = LS.get('pp.member.' + memberKey(), null); if (m) { delete m.ck; delete m.exp; LS.set('pp.member.' + memberKey(), m); }
-    if (forget && email) forgetAcct(email);
-    MEMBER = null; PID = null; MODE = 'gate'; GATE_MSG = forget ? 'You signed out, and this device forgot your account.' : 'You signed out.'; go('home'); });
-  SO_FORGET = false;
-  const body = $('.modal .mbody'); if (body && email) { body.insertAdjacentHTML('beforeend', `<label class="chk" style="margin-top:12px;display:flex"><input type="checkbox" id="soForget"> Also forget ${esc(email)} on this device</label>`); $('#soForget').onchange = e => { SO_FORGET = e.target.checked; }; }
+    MEMBER = null; PID = null; MODE = 'gate'; GATE_MSG = 'You signed out.'; go('home'); });
 }
-let SO_FORGET = false;
 function enterMember() {
   LS.del('pp.signedout.' + memberKey());
   if (MEMBER && MEMBER.email) sha256hex('live|' + normEmail(MEMBER.email)).then(h => { LIVE_TAG = h.slice(0, 16); livePresence(); });
   MODE = 'member'; PID = memberPID(MEMBER.email);
   MEMBER.exp = new Date(Date.now() + SESSION_DAYS * 864e5).toISOString(); delete MEMBER.code;
-  LS.set('pp.member.' + memberKey(), { name: MEMBER.name, email: MEMBER.email, ck: MEMBER.ck, exp: MEMBER.exp, joinedAt: MEMBER.joinedAt }); rememberAcct(MEMBER.email);
+  LS.set('pp.member.' + memberKey(), { name: MEMBER.name, email: MEMBER.email, ck: MEMBER.ck, exp: MEMBER.exp, joinedAt: MEMBER.joinedAt });
   syncProgress();
 }
 function memberStats() {
@@ -29590,37 +29602,51 @@ function renderBlocked() {
     <p class="small muted" style="margin-top:18px">Still stuck? Email the site owner at ${OWNER_EMAIL} and mention code <span class="mono">${esc(BLOCK)}</span>.</p></div>`;
   $('#retryB').onclick = () => { $('#retryB').disabled = true; $('#retryB').textContent = 'Checking…'; MODE = 'loading'; initAuth().catch(() => { MODE = 'blocked'; BLOCK = 'host'; }).then(() => route()); };
 }
+function saveCred(email, code) { try { if (window.PasswordCredential && navigator.credentials) navigator.credentials.store(new PasswordCredential({ id: email, password: code, name: email })).catch(() => {}); } catch (e) {} }
+function openForgot(email0) {
+  const email = normEmail(email0 || '');
+  const body = `Hello, I forgot my Comma access code. Could you please reset it and send me a new one?\n\nEmail I use to sign in: ${email || '(your email)'}\n`;
+  $('#modal-root').innerHTML = `<div class="scrim" id="scrim"><div class="modal sm" role="dialog" aria-modal="true" aria-labelledby="fgT"><div class="mhead"><h3 id="fgT">Forgot your code?</h3><button class="btn" id="fgClose">Close</button></div>
+    <div class="mbody rep-form"><p style="margin:0">Codes are made for each person, so the site owner resets it for you: your old code stops working and you get a new one by email.</p>
+      <div class="row" style="align-items:center"><span class="linkline" style="flex:1">${OWNER_EMAIL}</span><button class="btn" id="fgCopy">Copy email</button></div>
+      <div class="row"><a class="btn primary" target="_blank" rel="noopener" href="mailto:${OWNER_EMAIL}?subject=${encodeURIComponent('Comma: please reset my access code')}&body=${encodeURIComponent(body)}">Ask for a new code</a><span class="small" id="fgMsg" role="status"></span></div>
+      <p class="small muted" style="margin:0">Tip: if your browser saved your code, click the code box to see it.</p></div></div></div>`;
+  $('#fgClose').onclick = closeModal; $('#scrim').onclick = e => { if (e.target.id === 'scrim') closeModal(); };
+  $('#fgCopy').onclick = () => { try { navigator.clipboard.writeText(OWNER_EMAIL).then(() => { $('#fgMsg').textContent = 'Email copied'; }, () => { $('#fgMsg').textContent = 'Select the address and copy it'; }); } catch (e) { $('#fgMsg').textContent = 'Select the address and copy it'; } };
+}
 function renderGate(err) {
   setAccent(null); show('hub');
   $('#hub').innerHTML = `<div class="page gate"><div class="eyebrow">Comma</div><h1 class="display">Sign in</h1>
     <p class="lead">Sign in with your email and access code.</p>
     ${GATE_MSG ? `<p class="notice">${esc(GATE_MSG)}</p>` : ''}
-    ${(GUEST || !ACCT_EMAIL) && LS.get(ACCTS, []).length ? `<section class="panel accts"><h2>Accounts on this device</h2><ul>${LS.get(ACCTS, []).map(a => `<li><button class="acct-id" data-acct="${esc(a.email)}"><span class="av">${esc(initials(a.email))}</span><span class="em">${esc(a.email)}</span></button><div class="acct-act"><button class="btn" data-acct="${esc(a.email)}">Use this account</button><button class="linkbtn sm" data-acctx="${esc(a.email)}">Remove</button></div></li>`).join('')}</ul><p class="small muted" style="margin:6px 0 0">Your access code isn't stored on this device. Choose your account, then enter this month's code.</p></section>` : ''}
-    <section class="panel"><form id="gForm" autocomplete="off">
+    <section class="panel"><form id="gForm" autocomplete="on" method="post" action="#">
       ${!GUEST && ACCT_EMAIL ? `<p class="small" style="margin:0">Signed in to Claude as <b>${esc(ACCT_EMAIL)}</b>. Access codes work only with the email they were issued to.</p>` : ''}
-      <label>Email<input id="gName" type="email" maxlength="80" ${!GUEST && ACCT_EMAIL ? `value="${esc(ACCT_EMAIL)}" readonly` : (LS.get('pp.member.' + memberKey(), null) || {}).email ? `value="${esc(LS.get('pp.member.' + memberKey(), null).email)}"` : ''} placeholder="you@example.com" autocomplete="email"></label>
-      <label>Access code<input id="gCode" maxlength="40" placeholder="XXXX-XXXX" spellcheck="false"></label>
+      <label>Email<input id="gName" type="email" maxlength="80" ${!GUEST && ACCT_EMAIL ? `value="${esc(ACCT_EMAIL)}" readonly` : (LS.get('pp.member.' + memberKey(), null) || {}).email ? `value="${esc(LS.get('pp.member.' + memberKey(), null).email)}"` : ''} placeholder="you@example.com" name="username" autocomplete="username"></label>
+      <label>Access code<span class="pw-wrap"><input id="gCode" name="password" type="password" maxlength="40" placeholder="XXXX-XXXX" spellcheck="false" autocomplete="current-password" autocapitalize="characters"><button type="button" class="linkbtn sm" id="gShow" aria-pressed="false">Show</button></span></label>
+      <p class="small muted" style="margin:-4px 0 0">Your browser can save and fill in your code next time.</p>
       <button class="btn primary" type="submit" id="gGo">Sign in</button>
       <div class="err" id="gErr" role="alert">${err ? esc(err) : ''}</div></form></section>
-    <p class="small muted">Don't have a code? Ask the site owner (${OWNER_EMAIL}).</p></div>`;
+    <p class="small muted"><button class="linkbtn sm" id="gForgot">Forgot your code?</button> · Don't have a code? Ask the site owner (${OWNER_EMAIL}).</p></div>`;
   $('#gForm').onsubmit = async e => {
     e.preventDefault(); const email = !GUEST && ACCT_EMAIL ? ACCT_EMAIL : normEmail($('#gName').value), code = $('#gCode').value;
     const fail = m => { $('#gErr').textContent = m; $('#gGo').disabled = false; };
     if (!isEmail(email)) return fail('Enter the email address the site owner registered for you.');
     if (normCode(code).length < 4) return fail('Enter your access code.');
     $('#gGo').disabled = true;
-    if (GUEST) { if (!(await guestValid(email, code))) return fail('That email and access code don\'t match. Codes change every month, so check you have this month\'s code, or ask the site owner.');
-      MEMBER = { name: email, email, ck: await ckOf(email, code), joinedAt: new Date().toISOString() }; GATE_MSG = ''; enterMember(); go('home'); return; }
+    if (GUEST) { if (!(await guestValid(email, code))) return fail('That email and access code don\'t match. Monthly codes change on the 1st, so check you have the latest one, or use "Forgot your code?" below.');
+      MEMBER = { name: email, email, ck: await ckOf(email, code), joinedAt: new Date().toISOString() }; GATE_MSG = ''; saveCred(email, code); enterMember(); go('home'); return; }
     await loadAccess();
     if (!ACCESS_DOC.emails.length) return fail('The site couldn\'t load its invitation list for your Claude account. Make sure you\'re signed in at claude.ai with the email the site owner shared the site with, then reload.');
-    if (!(await emailActive(email)) || !(await codeOK(email, code))) return fail('That email and access code don\'t match. Codes change every month, so check you have this month\'s code, or ask the site owner.');
+    if (!(await emailActive(email)) || !(await codeOK(email, code))) return fail('That email and access code don\'t match. Monthly codes change on the 1st, so check you have the latest one, or use "Forgot your code?" below.');
     if (ACCESS_DOC.removed.includes(memberKey())) return fail('The site owner removed your access. Ask them to restore it.');
     MEMBER = { name: email, email, ck: await ckOf(email, code), joinedAt: new Date().toISOString() }; GATE_MSG = '';
-    enterMember(); go('home');
+    saveCred(email, code); enterMember(); go('home');
   };
   formFix('#gForm'); (!GUEST && ACCT_EMAIL ? $('#gCode') : $('#gName')).focus();
-  $$('[data-acct]').forEach(b => b.onclick = () => { $('#gName').value = b.dataset.acct; $('#gCode').value = ''; $('#gCode').focus(); });
-  $$('[data-acctx]').forEach(b => b.onclick = () => { forgetAcct(b.dataset.acctx); renderGate(); });
+  $('#gShow').onclick = () => { const v = $('#gCode').type === 'password'; $('#gCode').type = v ? 'text' : 'password'; $('#gShow').textContent = v ? 'Hide' : 'Show'; $('#gShow').setAttribute('aria-pressed', v); };
+  $('#gForgot').onclick = () => openForgot($('#gName').value);
+  /* ask the browser's password manager for a saved code (Chrome/Edge); other browsers fill the fields themselves */
+  try { if (window.PasswordCredential && navigator.credentials && GUEST) navigator.credentials.get({ password: true, mediation: 'optional' }).then(c => { if (c && c.password && $('#gCode') && !$('#gCode').value) { if (!$('#gName').readOnly) $('#gName').value = c.id; $('#gCode').value = c.password; } }).catch(() => {}); } catch (e) {}
 }
 
 /* ── reports ── */
@@ -29656,35 +29682,37 @@ async function admLoad() {
   const uids = ADM.members.map(m => m.uid).filter(Boolean);
   if (uids.length) { try { ADM.names = await USER.profiles(uids) || {}; } catch (e) { ADM.names = {}; } }
   ADM.cur = {}; ADM.next = {};
-  for (const c of ADM.codes) if (c.email) { ADM.cur[c.email] = await derivedCode(c.email); ADM.next[c.email] = await derivedCode(c.email, monthKey(1)); }
+  await admRecalc();
   const want = (await Promise.all(ADM.codes.filter(c => !c.revoked && c.email).map(c => emHash(c.email)))).sort().join();
   if (want !== ACCESS_DOC.emails.slice().sort().join()) { try { await admSaveCodes(); } catch (e) {} }
   ADM.loaded = true; await liveTagMap();
 }
+async function admRecalc() { ADM.cur = {}; ADM.next = {}; ADM.life = {}; for (const c of ADM.codes) if (c.email) { ADM.cur[c.email] = await monthCode(c.email, monthKey(), c.v); ADM.next[c.email] = await monthCode(c.email, monthKey(1), c.v); if (c.life) ADM.life[c.email] = await lifeCode(c.email, c.v); } }
 async function admSaveCodes() {
   await DB.doc('admin/codes').set({ items: ADM.codes });
   ACCESS_DOC.list = ADM.codes.filter(c => !c.revoked).map(c => c.hash);
   ACCESS_DOC.emails = await Promise.all(ADM.codes.filter(c => !c.revoked && c.email).map(c => emHash(c.email)));
-  await DB.doc('access/codes').set({ list: ACCESS_DOC.list, removed: ACCESS_DOC.removed, emails: ACCESS_DOC.emails });
+  const lv = {}; for (const c of ADM.codes) if (!c.revoked && c.email && (c.v || c.life)) lv[await emHash(c.email)] = { v: c.v || 0, life: !!c.life }; ACCESS_DOC.lv = lv;
+  await DB.doc('access/codes').set({ list: ACCESS_DOC.list, removed: ACCESS_DOC.removed, emails: ACCESS_DOC.emails, lv: ACCESS_DOC.lv || {} });
   ACCESS = new Set(ACCESS_DOC.list);
 }
-async function admSaveRemoved() { await DB.doc('access/codes').set({ list: ACCESS_DOC.list, removed: ACCESS_DOC.removed, emails: ACCESS_DOC.emails }); }
+async function admSaveRemoved() { await DB.doc('access/codes').set({ list: ACCESS_DOC.list, removed: ACCESS_DOC.removed, emails: ACCESS_DOC.emails, lv: ACCESS_DOC.lv || {} }); }
 /* monthly code emails: the page can't send email itself, so each message opens in the owner's email app or is copied */
 const mailMonth = () => kstDay() >= 20 ? monthKey(1) : monthKey();
 const mailSent = mk => LS.get('pp.admin.mailsent.' + mk, {});
 const monthEn = mk => new Date(Date.UTC(+mk.slice(0, 4), +mk.slice(5) - 1, 15)).toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-function codeMail(email, code, mk, site) {
+function codeMail(email, code, mk, site, life) {
   const m = monthEn(mk), mo = m.split(' ')[0];
-  return { subject: `Your Comma access code for ${m}`,
+  return { subject: life ? 'Your Comma lifetime access code' : `Your Comma access code for ${m}`,
     body: `Hi there,
 
 Thank you so much for studying with Comma. It means a lot that you're using these resources to prepare, and I hope they've been helpful.
 
-Your access code for ${m} is:
+${life ? 'Your lifetime access code is:' : `Your access code for ${m} is:`}
 
     ${code}
 
-Sign in at ${site} with this email address (${email}) and the code above. Codes refresh on the 1st of each month, and I'll send you the new one each time.
+Sign in at ${site} with this email address (${email}) and the code above. ${life ? "This code doesn't expire, so you can keep using it. Your browser can save it for you." : "Codes refresh on the 1st of each month, and I'll send you the new one each time."}
 
 If you have a minute, I'd love to hear what you think. You can leave a review, a suggestion, or a bug report in our community: ${REDDIT}
 
@@ -29699,14 +29727,14 @@ ${OWNER_EMAIL}` };
 async function openCodeMail(emails, mk) {
   if (!emails.length) return;
   mk = mk || mailMonth(); const site = LS.get('pp.admin.siteurl', 'https://www.comma-ltd.com');
-  const items = await Promise.all(emails.map(async e => ({ e, code: await derivedCode(e, mk) })));
+  const items = await Promise.all(emails.map(async e => { const c = ADM.codes.find(x => x.email === e) || {}; return { e, life: !!c.life, code: c.life ? await lifeCode(e, c.v) : await monthCode(e, mk, c.v) }; }));
   const sent = mailSent(mk);
   $('#modal-root').innerHTML = `<div class="scrim" id="scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cmT"><div class="mhead"><h3 id="cmT">Email ${emails.length === 1 ? 'access code' : emails.length + ' access codes'}</h3><button class="btn" id="cmClose">Close</button></div>
     <div class="mbody">
       <div class="cm-opts"><label>Code for <select id="cmMonth"><option value="${monthKey()}" ${mk === monthKey() ? 'selected' : ''}>${esc(monthEn(monthKey()))}</option><option value="${monthKey(1)}" ${mk === monthKey(1) ? 'selected' : ''}>${esc(monthEn(monthKey(1)))}</option></select></label>
         <label>Site link <input id="cmSite" value="${esc(site)}" spellcheck="false"></label></div>
       <p class="small muted" style="margin:6px 0 14px">Each person gets their own code, so each email is separate. "Open in email app" starts a draft you can review and send. If it doesn't open, use "Copy message" and paste it into your email.</p>
-      ${items.map(({ e, code }, i) => { const m = codeMail(e, code, mk, site); const href = 'mailto:' + encodeURIComponent(e) + '?subject=' + encodeURIComponent(m.subject) + '&body=' + encodeURIComponent(m.body);
+      ${items.map(({ e, code }, i) => { const m = codeMail(e, code, mk, site, items[i].life); const href = 'mailto:' + encodeURIComponent(e) + '?subject=' + encodeURIComponent(m.subject) + '&body=' + encodeURIComponent(m.body);
         return `<article class="cm-item"><div class="cm-h"><b>${esc(e)}</b><span class="mono">${esc(code)}</span>${sent[e] ? '<span class="st-on small">✓ marked sent</span>' : ''}</div>
           <div class="small"><b>Subject:</b> ${esc(m.subject)}</div>
           <details ${items.length === 1 ? 'open' : ''}><summary class="small">Preview message</summary><pre class="cm-body">${esc(m.body)}</pre></details>
@@ -29719,8 +29747,8 @@ async function openCodeMail(emails, mk) {
   $('#cmClose').onclick = () => { closeModal(); if (ROUTE === 'admin') { renderAdmin(); bindNav(); } };
   $('#cmMonth').onchange = reopen;
   $('#cmSite').onchange = () => { LS.set('pp.admin.siteurl', $('#cmSite').value.trim() || 'https://www.comma-ltd.com'); reopen(); };
-  $$('[data-cmcopy]').forEach(b => b.onclick = () => { const i = +b.dataset.cmcopy; const m = codeMail(items[i].e, items[i].code, mk, $('#cmSite').value.trim()); copy(m.body, i, 'Message'); });
-  $$('[data-cmsubj]').forEach(b => b.onclick = () => { const i = +b.dataset.cmsubj; copy(codeMail(items[i].e, items[i].code, mk, site).subject, i, 'Subject'); });
+  $$('[data-cmcopy]').forEach(b => b.onclick = () => { const i = +b.dataset.cmcopy; const m = codeMail(items[i].e, items[i].code, mk, $('#cmSite').value.trim(), items[i].life); copy(m.body, i, 'Message'); });
+  $$('[data-cmsubj]').forEach(b => b.onclick = () => { const i = +b.dataset.cmsubj; copy(codeMail(items[i].e, items[i].code, mk, site, items[i].life).subject, i, 'Subject'); });
   $$('[data-cmopen]').forEach(a => a.addEventListener('click', () => { const i = +a.dataset.cmopen; setSent(i, true); const c = $(`[data-cmsent="${i}"]`); if (c) c.checked = true; msg(i, 'Draft opened. Marked as sent.'); }));
   $$('[data-cmsent]').forEach(c => c.onchange = () => setSent(+c.dataset.cmsent, c.checked));
 }
@@ -29743,18 +29771,37 @@ function renderAdmin() {
   if (!ADM.loaded) { admLoad().then(() => { if (ROUTE === 'admin') { renderAdmin(); bindNav(); } }); return; }
   admBind();
 }
+/* Access tab: one box for people with lifetime codes, one for people on monthly codes */
+function accSection(kind) {
+  const life = kind === 'life', list = ADM.codes.slice().reverse().filter(c => !!c.life === life), act = list.filter(c => !c.revoked && c.email);
+  const allSel = act.length && act.every(c => ADM.sel.has(c.email)), mk = mailMonth();
+  const head = life ? `<h2>People with lifetime access · ${act.length}</h2><p class="small muted" style="margin-top:0">Their codes never change. Use "Reset code" if someone forgets theirs or it gets shared.</p>`
+    : `<h2>People with monthly access · ${act.length}</h2><p class="small muted" style="margin-top:0">Their codes change on the 1st of every month (Korea time); last month's code keeps working through the 3rd.</p>`;
+  if (!list.length) return `<section class="panel acc-box ${life ? 'life-box' : ''}" style="margin-top:16px">${head}<div class="empty">${life ? 'No one has a lifetime code yet. Tick "Give a lifetime code" when you add someone, or use "Give lifetime code" in the monthly list below.' : 'No one is on monthly codes. Add a person above.'}</div></section>`;
+  const rows = list.map(c => {
+    const n = ADM.members.filter(m => !m.imported && normEmail(m.email || m.name || '') === normEmail(c.email || '')).length;
+    const cur = (ADM.cur || {})[c.email] || '…', nxt = (ADM.next || {})[c.email] || '…', lc = (ADM.life || {})[c.email] || '…';
+    const sent = c.email && mailSent(mk)[c.email];
+    const codeCells = life ? `<td class="mono"><b>${esc(lc)}</b> <button class="linkbtn sm" data-cc="${esc(lc)}">Copy code</button></td>`
+      : `<td class="mono"><b>${esc(cur)}</b> <button class="linkbtn sm" data-cc="${esc(cur)}">Copy code</button></td>${kstDay() >= 20 ? `<td class="mono">${esc(nxt)} <button class="linkbtn sm" data-cc="${esc(nxt)}">Copy</button><br><small class="muted">starts ${esc(monthName(monthKey(1)).split(' ')[0])} 1</small></td>` : ''}`;
+    return `<tr><td class="cbx">${!c.revoked && c.email ? `<input type="checkbox" data-csel="${esc(c.email)}" aria-label="Select ${esc(c.email)}" ${ADM.sel.has(c.email) ? 'checked' : ''}>` : ''}</td>
+      <td><b>${esc(c.email || c.label || '—')}</b><br><small class="muted">added ${fmtDate(c.created)}</small>${sent ? `<br><span class="st-on small">✓ ${life ? 'code' : esc(monthName(mk).split(' ')[0]) + ' code'} emailed</span>` : ''}</td>
+      ${codeCells}<td class="mono">${n ? 'Yes' : 'Not yet'}</td><td>${c.revoked ? '<span class="st-off">Turned off</span>' : '<span class="st-on">Active</span>'}</td>
+      <td><div class="row" style="gap:6px">${!c.revoked && c.email ? `<button class="btn" data-cem="${esc(c.email)}">✉ Email</button><button class="btn" data-crs="${c.hash}">Reset code</button><button class="btn quiet" data-clife="${c.hash}">${life ? 'Switch to monthly' : 'Give lifetime code'}</button>` : ''}${c.revoked ? `<button class="btn" data-cre="${c.hash}">Turn on</button><button class="btn danger" data-cdel="${c.hash}">Delete</button>` : `<button class="btn danger" data-crev="${c.hash}">Turn off</button>`}</div></td></tr>`; }).join('');
+  const nSel = act.filter(c => ADM.sel.has(c.email)).length;
+  return `<section class="panel acc-box ${life ? 'life-box' : ''}" style="margin-top:16px">${head}
+    <div class="mail-bar"><label class="chk"><input type="checkbox" data-ceall="${kind}" ${allSel ? 'checked' : ''}> Select all</label><button class="btn primary" data-cesel="${kind}" ${nSel ? '' : 'disabled'}>✉ Email code${nSel === 1 ? '' : 's'} to selected (${nSel})</button>${life ? '' : `<span class="small muted">Sent this month: ${act.filter(c => mailSent(mk)[c.email]).length} of ${act.length}</span>`}</div>
+    <div class="tablewrap"><table class="adm"><thead><tr><th class="cbx"><span class="sr">Select</span></th><th>Email</th>${life ? '<th>Lifetime code</th>' : `<th>${esc(monthName(monthKey()))} code</th>${kstDay() >= 20 ? `<th>${esc(monthName(monthKey(1)))} code</th>` : ''}`}<th>Signed in</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="small muted">"Copy code" copies just the code.${life ? '' : kstDay() >= 20 ? ' Next month\'s codes are shown from the 20th so you can send them ahead of time.' : ' Next month\'s codes appear here from the 20th.'} Turning off access locks that person out the next time they open the site; their progress stays in the Members list.</p></section>`;
+}
 function admBody() {
   if (ADM.tab === 'codes') return `<section class="panel"><h2>Give someone access</h2>
       <p class="small muted" style="margin-top:0">Enter the person's email. The site makes their access code. <b>Codes change on the 1st of every month</b> (Korea time), so a shared code stops working at the end of the month; send each person their new code. Last month's code keeps working through the 3rd.</p>
       <form class="admin-form" id="cForm" autocomplete="off"><input id="cEmail" type="email" maxlength="80" placeholder="Their email, e.g. jenny@example.com"><button class="btn primary" type="submit">Add</button></form>
+      <label class="chk small" style="margin-top:10px;display:flex"><input type="checkbox" id="cLife"> Give a lifetime code (never changes) instead of monthly codes</label>
       <div class="err" id="cErr" role="alert"></div></section>
-    <section class="panel" style="margin-top:16px"><h2>People with access</h2>${ADM.codes.length ? `<div class="mail-bar"><label class="chk"><input type="checkbox" id="ceAll" ${ADM.codes.filter(c => !c.revoked && c.email).length && ADM.codes.filter(c => !c.revoked && c.email).every(c => ADM.sel.has(c.email)) ? 'checked' : ''}> Select all active</label><button class="btn primary" id="ceSel" ${ADM.sel.size ? '' : 'disabled'}>✉ Email code${ADM.sel.size === 1 ? '' : 's'} to selected (${ADM.sel.size})</button><span class="small muted">Sent this month: ${ADM.codes.filter(c => !c.revoked && c.email && mailSent(mailMonth())[c.email]).length} of ${ADM.codes.filter(c => !c.revoked && c.email).length}</span></div>
-      <div class="tablewrap"><table class="adm"><thead><tr><th class="cbx"><span class="sr">Select</span></th><th>Email</th><th>${esc(monthName(monthKey()))} code</th>${kstDay() >= 20 ? `<th>${esc(monthName(monthKey(1)))} code</th>` : ''}<th>Signed in</th><th>Status</th><th></th></tr></thead><tbody>
-      ${ADM.codes.slice().reverse().map(c => { const n = ADM.members.filter(m => !m.imported && normEmail(m.email || m.name || '') === normEmail(c.email || '')).length; const cur = (ADM.cur || {})[c.email] || '…', nxt = (ADM.next || {})[c.email] || '…';
-        const sent = c.email && mailSent(mailMonth())[c.email];
-        return `<tr><td class="cbx">${!c.revoked && c.email ? `<input type="checkbox" data-csel="${esc(c.email)}" aria-label="Select ${esc(c.email)}" ${ADM.sel.has(c.email) ? 'checked' : ''}>` : ''}</td><td><b>${esc(c.email || c.label || '—')}</b><br><small class="muted">added ${fmtDate(c.created)}</small>${sent ? `<br><span class="st-on small">✓ ${esc(monthName(mailMonth()).split(' ')[0])} code emailed</span>` : ''}</td><td class="mono"><b>${esc(cur)}</b> <button class="linkbtn sm" data-cc="${esc(cur)}">Copy code</button></td>${kstDay() >= 20 ? `<td class="mono">${esc(nxt)} <button class="linkbtn sm" data-cc="${esc(nxt)}">Copy</button><br><small class="muted">starts ${esc(monthName(monthKey(1)).split(' ')[0])} 1</small></td>` : ''}<td class="mono">${n ? 'Yes' : 'Not yet'}</td><td>${c.revoked ? '<span class="st-off">Turned off</span>' : '<span class="st-on">Active</span>'}</td>
-        <td><div class="row" style="gap:6px">${!c.revoked && c.email ? `<button class="btn" data-cem="${esc(c.email)}">✉ Email</button>` : ''}${c.revoked ? `<button class="btn" data-cre="${c.hash}">Turn on</button><button class="btn danger" data-cdel="${c.hash}">Delete</button>` : `<button class="btn danger" data-crev="${c.hash}">Turn off</button>`}</div></td></tr>`; }).join('')}</tbody></table></div>
-      <p class="small muted">"Copy code" copies just the access code.${kstDay() >= 20 ? ' Next month\'s codes are shown from the 20th so you can send them ahead of time.' : ' Next month\'s codes appear here from the 20th.'} Turning off access locks that person out the next time they open the site; their progress stays in the Members list.</p>` : '<div class="empty">No one has access yet. Add a person above, then send them the site link with their email and access code.</div>'}</section>`;
+    ${accSection('life')}
+    ${accSection('month')}`;
   if (ADM.tab === 'reports') return ADM.reports.length ? `<div style="display:grid;gap:10px">${ADM.reports.map(r => { const tx = r.test && BY_ID[r.test]; return `<div class="rep ${r.resolved ? 'done' : ''}">
       <div class="rh"><b style="color:var(--ink)">${esc(r.who)}</b><span class="chip-s">${esc(REP_KINDS[r.kind] || r.kind)}</span><span>${fmtDate(r.date)}</span>${r.resolved ? '<span class="st-on">Resolved</span>' : ''}<span style="flex:1"></span>
         <button class="linkbtn sm" data-rres="${esc(r.doc)}|${esc(r.id)}">${r.resolved ? 'Reopen' : 'Mark resolved'}</button><button class="linkbtn sm" style="color:var(--bad)" data-rdel="${esc(r.doc)}|${esc(r.id)}">Delete</button></div>
@@ -29795,12 +29842,17 @@ function admBind() {
     const err = m => { $('#cErr').textContent = m; };
     if (!isEmail(email)) return err('Enter a valid email address.');
     if (ADM.codes.some(c => !c.revoked && normEmail(c.email || '') === email)) return err('This email already has an active access code. Turn it off first to give them a new one.');
-    ADM.codes.push({ email, label: email, hash: await emHash(email), monthly: true, created: new Date().toISOString() });
-    ADM.cur[email] = await derivedCode(email); ADM.next[email] = await derivedCode(email, monthKey(1)); await guard(admSaveCodes, `Added ${email} · code ${ADM.cur[email]}`); };
+    const life = $('#cLife') && $('#cLife').checked;
+    ADM.codes.push({ email, label: email, hash: await emHash(email), monthly: !life, life, v: 0, created: new Date().toISOString() });
+    await admRecalc(); await guard(admSaveCodes, `Added ${email} · ${life ? 'lifetime code ' + ADM.life[email] : 'code ' + ADM.cur[email]}`); };
+  $$('[data-crs]').forEach(b => b.onclick = () => { const c = ADM.codes.find(x => x.hash === b.dataset.crs); confirmBox(`Reset ${c.email}'s code?`, `They get a new ${c.life ? 'lifetime' : 'monthly'} code, and their current code stops working right away on the Claude site (anyone already signed in with it is signed out). Next, send them the new code.`, 'Reset code', async () => {
+    c.v = (c.v || 0) + 1; await admRecalc(); await guard(admSaveCodes, `New code for ${c.email}: ${c.life ? ADM.life[c.email] : ADM.cur[c.email]}`); openCodeMail([c.email]); }); });
+  $$('[data-clife]').forEach(b => b.onclick = async () => { const c = ADM.codes.find(x => x.hash === b.dataset.clife); c.life = !c.life; c.monthly = !c.life; await admRecalc(); await guard(admSaveCodes, c.life ? `Lifetime code for ${c.email}: ${ADM.life[c.email]}` : `${c.email} is back on monthly codes`); });
   formFix('#cForm');
   $$('[data-csel]').forEach(b => b.onchange = () => { b.checked ? ADM.sel.add(b.dataset.csel) : ADM.sel.delete(b.dataset.csel); redo(); });
-  if ($('#ceAll')) $('#ceAll').onchange = () => { const act = ADM.codes.filter(c => !c.revoked && c.email).map(c => c.email); if ($('#ceAll').checked) act.forEach(e => ADM.sel.add(e)); else ADM.sel.clear(); redo(); };
-  if ($('#ceSel')) $('#ceSel').onclick = () => openCodeMail([...ADM.sel]);
+  const grp = k => ADM.codes.filter(c => !c.revoked && c.email && !!c.life === (k === 'life')).map(c => c.email);
+  $$('[data-ceall]').forEach(cb => cb.onchange = () => { grp(cb.dataset.ceall).forEach(e => cb.checked ? ADM.sel.add(e) : ADM.sel.delete(e)); redo(); });
+  $$('[data-cesel]').forEach(b => b.onclick = () => openCodeMail(grp(b.dataset.cesel).filter(e => ADM.sel.has(e))));
   $$('[data-cem]').forEach(b => b.onclick = () => openCodeMail([b.dataset.cem]));
   $$('[data-cc]').forEach(b => b.onclick = () => { const txt = b.dataset.cc;
     try { navigator.clipboard.writeText(txt).then(() => admFlash('Copied ' + txt), () => admFlash('Select the code and copy it')); } catch (e) { admFlash('Select the code and copy it'); } });
