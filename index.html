@@ -1,6 +1,7 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Comma: free, original practice for teacher-certification tests."></head><body>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Comma: free, original practice for teacher-certification tests."><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%224 6.5 54 54%22%3E%3Cstyle%3E.c%7Bfill:%23172a46%7D%40media (prefers-color-scheme:dark)%7B.c%7Bfill:%23e6ebf5%7D%7D%3C/style%3E%3Ccircle class=%22c%22 cx=%2231%22 cy=%2224%22 r=%2216%22/%3E%3Cpath class=%22c%22 d=%22M46.4 29.2C44.6 43.4 36.2 53.6 25 59.4c-1.2.6-2.1-.7-1.2-1.6C28.4 53 31.6 47.6 33.6 40.1z%22/%3E%3C/svg%3E"></head><body>
 <title>Comma</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%224 6.5 54 54%22%3E%3Cstyle%3E.c%7Bfill:%23172a46%7D%40media (prefers-color-scheme:dark)%7B.c%7Bfill:%23e6ebf5%7D%7D%3C/style%3E%3Ccircle class=%22c%22 cx=%2231%22 cy=%2224%22 r=%2216%22/%3E%3Cpath class=%22c%22 d=%22M46.4 29.2C44.6 43.4 36.2 53.6 25 59.4c-1.2.6-2.1-.7-1.2-1.6C28.4 53 31.6 47.6 33.6 40.1z%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -217,11 +218,27 @@ p.lead { color: var(--muted); max-width: 62ch; margin: 0 0 22px; font-size: 17px
 .accts .av { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
 .accts .em { min-width: 0; font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
 .acct-act { display: flex; align-items: center; gap: 14px; padding-left: 46px; }
+.newbox { margin-top: 26px; }
+.nb-h { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.tag-new { background: var(--ember); color: var(--surface); font-weight: 700; padding: 2px 7px; border-radius: 2px; letter-spacing: .08em; }
+.newbox ul { list-style: none; margin: 0; padding: 0; }
+.newbox li { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 4px 14px; align-items: baseline; padding: 9px 0; border-bottom: 1px dotted var(--line); }
+.newbox li b { font-family: var(--font-display); font-weight: 500; font-size: 17px; }
+.nb-tests { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.nb-tests a { font-size: 13.5px; font-weight: 600; color: var(--ink); text-decoration: none; border: 1px solid var(--line); padding: 3px 9px; border-radius: 999px; background: var(--surface); }
+.nb-tests a small { font-family: var(--font-mono); font-weight: 400; color: var(--muted); font-size: 11px; }
+.nb-tests a:hover { border-color: var(--ember); color: var(--ember); }
+.nb-comm { display: block; margin-top: 12px; line-height: 1.5; font-size: 13.5px; color: var(--muted); text-decoration: none; }
+.nb-comm b { color: var(--cobalt); } .nb-comm:hover b { text-decoration: underline; }
+@media (max-width: 560px) { .newbox li { grid-template-columns: 1fr; } }
 .ref-card { margin-top: 12px; padding: 12px 16px; border: 1px solid var(--line); border-left: 4px solid var(--cobalt); background: var(--surface); font-size: 14px; }
 .ref-card .ref-txt { display: grid; gap: 4px; } .ref-card b { font-size: 15px; } .ref-card span { color: var(--ink); }
 .ref-card a.ref-link { justify-self: start; display: inline-flex; gap: 6px; align-items: center; margin: 4px 0 2px; padding: 6px 12px; border: 1px solid var(--cobalt); color: var(--cobalt); font-weight: 600; text-decoration: none; white-space: nowrap; }
 .ref-card a.ref-link:hover { background: var(--cobalt); color: var(--surface); } .ref-card small { color: var(--muted); font-size: 12px; }
 .ref-card.about { margin-top: 22px; }
+.ref-card.wide { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin: 28px 0 0; padding: 16px 22px; }
+.ref-card.wide .ref-txt { flex: 1 1 420px; min-width: 0; }
+.ref-card.wide a.ref-link { margin: 0; flex: none; }
 .give-tag { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13.5px; color: var(--muted); text-decoration: none; }
 .give-tag .hrt { color: var(--ember); } .give-tag:hover { color: var(--ink); }
 @media (max-width: 640px) { .specimen figure { display: none; } .specimen { margin-top: 0; } .give-card.home { margin-top: 4px; } }
@@ -28658,6 +28675,7 @@ function renderHome() {
           <li><a href="#lab"><b>Response Lab</b><span>Feedback on your written answers</span><i>→</i></a></li>
           <li><a href="#review"><b>Quick Review</b><span>Flashcards and formula sheets</span><i>→</i></a></li>
         </ul>
+        ${newTestsHTML()}
       </div>
       <div class="specimen" aria-label="Example: how a practice question is explained">
         <figure>
@@ -28704,7 +28722,23 @@ function renderCatalog(kind) {
 }
 const REDDIT = 'https://www.reddit.com/r/CommaClassroom/';
 const REFERRAL = 'https://join.moreland.edu/mQTiPj6';
+/* "New on Comma": edit this list when tests are added (newest group first) */
+const NEW_TESTS = [
+  ['World Languages', ['wl-es-5195', 'wl-fr-5174', 'wl-zh-5665']],
+  ['Social Studies', ['ss-5581', 'ss-5081', 'ss-5086', 'ss-5941']],
+  ['Core Academic Skills', ['core-read-5713', 'core-write-5723', 'core-math-5733']],
+];
+const SHORT_NAME = { 'wl-es-5195': 'Spanish', 'wl-fr-5174': 'French', 'wl-zh-5665': 'Chinese', 'ss-5581': 'Social Studies', 'ss-5081': 'Content Knowledge', 'ss-5086': 'Content & Interpretation', 'ss-5941': 'World & U.S. History', 'core-read-5713': 'Reading', 'core-write-5723': 'Writing', 'core-math-5733': 'Math' };
+function newTestsHTML() {
+  const groups = NEW_TESTS.map(([g, ids]) => [g, ids.filter(id => BY_ID[id])]).filter(([, ids]) => ids.length);
+  if (!groups.length) return '';
+  return `<section class="newbox" aria-label="Recently added tests"><div class="nb-h"><span class="tag-new">New</span> Recently added tests</div>
+    <ul>${groups.map(([g, ids]) => `<li><b>${esc(g)}</b><span class="nb-tests">${ids.map(id => `<a href="#${id}" data-pref="practice">${esc(SHORT_NAME[id] || BY_ID[id].subject)} <small>${BY_ID[id].code}</small></a>`).join('')}</span></li>`).join('')}</ul>
+    <a class="nb-comm" href="${REDDIT}" target="_blank" rel="noopener noreferrer">Ideas, requests, or found a mistake? Join <b>r/CommaClassroom</b> <span aria-hidden="true">↗</span></a></section>`;
+}
 function referralHTML(where) {
+  if (/wide/.test(where)) return `<aside class="ref-card ${where}" aria-label="Moreland University referral"><div class="ref-txt"><b>Becoming a teacher?</b><span>Interested in earning your teaching certification through Moreland University? If you're considering applying, you can use my referral link when you apply.</span><small>Optional. Comma's resources are free either way. Comma isn't affiliated with Moreland University; this is a personal referral link.</small></div>
+    <a class="ref-link" href="${REFERRAL}" target="_blank" rel="noopener noreferrer">join.moreland.edu/mQTiPj6 <span aria-hidden="true">↗</span></a></aside>`;
   return `<aside class="ref-card ${where}" aria-label="Moreland University referral"><div class="ref-txt"><b>Becoming a teacher?</b><span>Interested in earning your teaching certification through Moreland University? If you're considering applying, you can use my referral link when you apply:</span>
     <a class="ref-link" href="${REFERRAL}" target="_blank" rel="noopener noreferrer">join.moreland.edu/mQTiPj6 <span aria-hidden="true">↗</span></a>
     <small>Optional. Comma's resources are free either way. Comma isn't affiliated with Moreland University; this is a personal referral link.</small></div></aside>`;
@@ -29710,11 +29744,14 @@ function codeMail(email, code, mk, site, life) {
 
 Thank you so much for studying with Comma. It means a lot that you're using these resources to prepare, and I hope they've been helpful.
 
-${life ? 'Your lifetime access code is:' : `Your access code for ${m} is:`}
+In case you haven't visited yet, Comma is a free website for teacher-certification test prep: practice questions with instant feedback, full timed exam simulations, feedback on written responses, and flashcards with formula sheets.
 
-    ${code}
+How to sign in:
+    Website:      ${site}
+    Email:        ${email}
+    Access code:  ${code}${life ? ' (lifetime)' : ` (for ${m})`}
 
-Sign in at ${site} with this email address (${email}) and the code above. ${life ? "This code doesn't expire, so you can keep using it. Your browser can save it for you." : "Codes refresh on the 1st of each month, and I'll send you the new one each time."}
+Open the website, enter your email and the access code, and you're in. ${life ? "This code doesn't expire, so you can keep using it. Your browser can save it for you." : "Codes refresh on the 1st of each month, and I'll send you the new one each time."}
 
 If you have a minute, I'd love to hear what you think. You can leave a review, a suggestion, or a bug report in our community: ${REDDIT}
 
@@ -29746,7 +29783,7 @@ async function openCodeMail(emails, mk) {
   const msg = (i, t) => { const el = $(`[data-cmmsg="${i}"]`); if (el) el.textContent = t; };
   const copy = (txt, i, label) => { try { navigator.clipboard.writeText(txt).then(() => msg(i, label + ' copied'), () => msg(i, 'Copy blocked; open the preview and copy it by hand')); } catch (e) { msg(i, 'Copy blocked; open the preview and copy it by hand'); } };
   const setSent = (i, on) => { const d = mailSent(mk); if (on) d[items[i].e] = new Date().toISOString(); else delete d[items[i].e]; LS.set('pp.admin.mailsent.' + mk, d); };
-  $('#cmClose').onclick = () => { closeModal(); if (ROUTE === 'admin') { renderAdmin(); bindNav(); } };
+  $('#cmClose').onclick = () => { closeModal(); if (ROUTE === 'admin') { const y = window.scrollY; renderAdmin(); bindNav(); window.scrollTo(0, y); } };
   $('#cmMonth').onchange = reopen;
   $('#cmSite').onchange = () => { LS.set('pp.admin.siteurl', $('#cmSite').value.trim() || 'https://www.comma-ltd.com'); reopen(); };
   $$('[data-cmcopy]').forEach(b => b.onclick = () => { const i = +b.dataset.cmcopy; const m = codeMail(items[i].e, items[i].code, mk, $('#cmSite').value.trim(), items[i].life); copy(m.body, i, 'Message'); });
@@ -29770,7 +29807,7 @@ function renderAdmin() {
     <div id="admBody">${ADM.loaded ? admBody() : '<p class="muted">Loading…</p>'}</div>
     ${foot()}</div>`;
   $$('[data-at]').forEach(b => b.onclick = () => { ADM.tab = b.dataset.at; renderAdmin(); bindNav(); });
-  $('#admRef').onclick = async () => { $('#admRef').disabled = true; await admLoad(); renderAdmin(); bindNav(); admFlash('Updated'); };
+  $('#admRef').onclick = async () => { $('#admRef').disabled = true; const y = window.scrollY; await admLoad(); renderAdmin(); bindNav(); window.scrollTo(0, y); admFlash('Updated'); };
   if (!ADM.loaded) { admLoad().then(() => { if (ROUTE === 'admin') { renderAdmin(); bindNav(); } }); return; }
   admBind();
 }
@@ -29838,7 +29875,7 @@ function admBody() {
     : '<div class="empty">No members yet. Add people in the Access tab, share the site, and they will appear here after they sign in.</div>');
 }
 function admBind() {
-  const redo = () => { renderAdmin(); bindNav(); };
+  const redo = () => { const y = window.scrollY; renderAdmin(); bindNav(); window.scrollTo(0, y); };
   const guard = async (fn, ok) => { let good = true; try { await fn(); ADM.err = ''; } catch (e) { good = false; ADM.err = 'Could not save. Check your connection and try again.'; } redo(); if (good) admFlash(ok); };
   $$('[data-mo]').forEach(b => b.onclick = () => { ADM.open[b.dataset.mo] = !ADM.open[b.dataset.mo]; redo(); });
   if ($('#cForm')) $('#cForm').onsubmit = async e => { e.preventDefault(); const email = normEmail($('#cEmail').value);
