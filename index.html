@@ -28643,6 +28643,13 @@ function resetPick() {
     confirmBox(`Reset ${xs.length} test${xs.length > 1 ? 's' : ''}?`, `This clears your history for ${xs.map(x => x.subject).join(', ')}. It cannot be undone.`, 'Reset', () => {
       xs.forEach(x => Object.values(KEY(x)).forEach(k => LS.del(k))); syncProgress(); go('home'); }); };
 }
+/* remove only practice-mode results (exam simulations and timed drills stay) */
+function clearPractice(xs) { let n = 0; xs.forEach(x => { const k = KEY(x), h = LS.get(k.hist, []), keep = h.filter(r => !r.practice); n += h.length - keep.length; if (keep.length !== h.length) LS.set(k.hist, keep); const cur = LS.get(k.cur, null); if (cur && cur.practice) LS.del(k.cur); }); syncProgress(); return n; }
+function resetPractice() {
+  const n = TESTS.reduce((s, x) => s + LS.get(KEY(x).hist, []).filter(r => r.practice).length, 0);
+  if (!n) { confirmBox('No practice scores', 'You have no practice results to clear. Exam simulations are kept separately.', 'OK', () => {}); return; }
+  confirmBox('Clear all practice scores?', `This removes your ${n} practice result${n === 1 ? '' : 's'} across every test. Exam simulations and timed drills stay. It cannot be undone.`, 'Clear practice scores', () => { clearPractice(TESTS); go('home'); });
+}
 function resetAll() {
   const m = me();
   confirmBox('Reset all your tests?', `This clears every attempt, score, in-progress test, and question history for ${m.name} in all subjects, so you start fresh. It cannot be undone.`, 'Reset all tests', () => { wipeProfileData(PID); syncProgress(); go('home'); });
@@ -28699,13 +28706,13 @@ function renderHome() {
     ${all.length || inProg.length ? `<div class="progress-strip" aria-label="Your progress">
       <div><span class="n">${all.length}</span><small>attempts</small></div><div><span class="n">${totalQ.toLocaleString('en-US')}</span><small>questions</small></div>
       ${inProg.length ? `<a class="btn primary" href="#${inProg[0].x.id}">Continue ${esc(inProg[0].x.subject)}</a>` : ''}
-      <span style="flex:1"></span><button class="linkbtn sm" id="resetPickBtn">Reset tests</button><button class="linkbtn sm" id="resetAllBtn">Reset all</button>${MODE === 'owner' ? '<button class="linkbtn sm" id="switchBtn">Switch profile</button>' : ''}</div>` : ''}
+      <span style="flex:1"></span><button class="linkbtn sm" id="resetPracHome">Reset practice scores</button><button class="linkbtn sm" id="resetPickBtn">Reset tests</button><button class="linkbtn sm" id="resetAllBtn">Reset all</button>${MODE === 'owner' ? '<button class="linkbtn sm" id="switchBtn">Switch profile</button>' : ''}</div>` : ''}
     <section class="sec"><div class="margin"><b>Subjects</b>Choose a test</div><div class="sec-body">${subjAcc('')}</div></section>
     ${all.length ? `<section class="sec"><div class="margin"><b>Recent</b></div><div class="sec-body"><table class="recent"><tbody>${all.slice(0, 5).map(h => `<tr class="acc-${h.x.accent}"><td><span class="dot"></span>${esc(h.x.subject)} · ${h.practice ? 'practice' : h.mode === 'full' ? 'simulation' : 'timed drill'}</td><td class="mono"><b>${h.pct}%</b></td><td class="muted small">${fmtDate(h.date)}</td></tr>`).join('')}</tbody></table></div></section>` : ''}
     ${foot()}
   </div>`;
   bindAcc();
-  if ($('#resetAllBtn')) $('#resetAllBtn').onclick = resetAll; if ($('#resetPickBtn')) $('#resetPickBtn').onclick = resetPick; if ($('#switchBtn')) $('#switchBtn').onclick = () => go('profiles');
+  if ($('#resetAllBtn')) $('#resetAllBtn').onclick = resetAll; if ($('#resetPracHome')) $('#resetPracHome').onclick = resetPractice; if ($('#resetPickBtn')) $('#resetPickBtn').onclick = resetPick; if ($('#switchBtn')) $('#switchBtn').onclick = () => go('profiles');
 }
 const MODE_COPY = {
   practice: { eyebrow: 'Practice', title: 'Learn as <em>you go</em>', lead: 'Untimed. Check each answer and see the explanation right away.' },
@@ -28861,7 +28868,7 @@ function renderTestPage(x) {
     </section>
     <section style="margin-top:30px"><h2 class="sec-h">Attempt history</h2>
       ${hist.length ? `<div class="tablewrap"><table class="hist"><thead><tr><th>Date</th><th>Mode</th><th>Score</th><th>Time</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="empty">No attempts yet.</p>`}
-      <div class="row" style="margin-top:12px"><a href="${x.ets}" target="_blank" rel="noopener" class="small">Official test info</a>${hist.length || Object.keys(seen).length ? '<span style="flex:1"></span><button class="linkbtn sm" id="resetBtn">Clear history for this test</button>' : ''}</div>
+      <div class="row" style="margin-top:12px"><a href="${x.ets}" target="_blank" rel="noopener" class="small">Official test info</a>${hist.length || Object.keys(seen).length ? `<span style="flex:1"></span>${hist.some(h => h.practice) ? '<button class="linkbtn sm" id="resetPracBtn">Clear practice scores</button>' : ''}<button class="linkbtn sm" id="resetBtn">Clear all history</button>` : ''}</div>
     </section>
     ${foot()}
   </div>`;
@@ -28874,7 +28881,8 @@ function renderTestPage(x) {
   if ($('#openHelp')) $('#openHelp').onclick = () => openHelp(x, x.tools[0]);
   if ($('#resumeBtn')) $('#resumeBtn').onclick = () => { T = saved; enterExam(); };
   if ($('#discardBtn')) $('#discardBtn').onclick = () => confirmBox('Discard this attempt?', 'Your answers for the attempt in progress will be deleted. Your history is not affected.', 'Discard', () => { LS.del(k.cur); renderTestPage(x); });
-  if ($('#resetBtn')) $('#resetBtn').onclick = () => confirmBox(`Clear ${x.subject} history?`, 'This removes your attempt history and the record of which questions you have seen for this test. It cannot be undone.', 'Clear history', () => { LS.del(k.hist); LS.del(k.seen); renderTestPage(x); });
+  if ($('#resetBtn')) $('#resetBtn').onclick = () => confirmBox(`Clear all ${x.subject} history?`, 'This removes every attempt (practice and exam simulations) and the record of which questions you have seen for this test. It cannot be undone.', 'Clear all history', () => { LS.del(k.hist); LS.del(k.seen); syncProgress(); renderTestPage(x); });
+  if ($('#resetPracBtn')) $('#resetPracBtn').onclick = () => { const n = hist.filter(h => h.practice).length; confirmBox(`Clear ${x.subject} practice scores?`, `This removes your ${n} practice result${n === 1 ? '' : 's'} for this test. Exam simulations and timed drills stay. It cannot be undone.`, 'Clear practice scores', () => { clearPractice([x]); renderTestPage(x); }); };
   $$('[data-review]').forEach(b => b.onclick = () => { const h = LS.get(k.hist, [])[+b.dataset.review]; if (h) renderResults(h, false); });
 }
 function startTest(x, mode, cat, level, practice) {
