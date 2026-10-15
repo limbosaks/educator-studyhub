@@ -236,6 +236,16 @@ p.lead { color: var(--muted); max-width: 62ch; margin: 0 0 22px; font-size: 17px
 .ref-card a.ref-link { justify-self: start; display: inline-flex; gap: 6px; align-items: center; margin: 4px 0 2px; padding: 6px 12px; border: 1px solid var(--cobalt); color: var(--cobalt); font-weight: 600; text-decoration: none; white-space: nowrap; }
 .ref-card a.ref-link:hover { background: var(--cobalt); color: var(--surface); } .ref-card small { color: var(--muted); font-size: 12px; }
 .ref-card.about { margin-top: 22px; }
+.hi-card { padding: 16px 20px 18px; border: 1px solid var(--line); border-left: 4px solid var(--ember); background: var(--surface); }
+.hi-card h3 { margin-top: 0; } .hi-card #about-give { scroll-margin-top: 110px; }
+.faq { scroll-margin-top: 110px; margin-top: 44px; border-top: 1px solid var(--ink); padding-top: 26px; max-width: 860px; }
+.faq-q { border-bottom: 1px solid var(--line); }
+.faq-q > summary { list-style: none; cursor: pointer; display: flex; gap: 12px; align-items: baseline; padding: 15px 4px; font: inherit; font-weight: 600; font-size: 17px; }
+.faq-q > summary::-webkit-details-marker { display: none; }
+.faq-q > summary::after { content: "+"; margin-left: auto; font-family: var(--font-mono); font-size: 18px; color: var(--muted); }
+.faq-q[open] > summary::after { content: "–"; color: var(--ember); }
+.faq-q > summary:hover { color: var(--cobalt); }
+.faq-a { padding: 0 4px 16px; max-width: 70ch; } .faq-a p { margin: 0 0 10px; }
 .ref-card.wide { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin: 28px 0 0; padding: 16px 22px; }
 .ref-card.wide .ref-txt { flex: 1 1 420px; min-width: 0; }
 .ref-card.wide a.ref-link { margin: 0; flex: none; }
@@ -28500,7 +28510,7 @@ function route() {
   else if (h === 'simulate') renderCatalog('simulate');
   else if (h === 'lab') renderLab();
   else if (h === 'review') renderReview();
-  else if (h === 'about' || h === 'about-give' || h === 'support') renderAbout();
+  else if (h === 'about' || h === 'about-give' || h === 'support' || h === 'faq' || h === 'about-faq') renderAbout();
   else if (h === 'community') renderCommunity();
   else if (BY_ID[h]) renderTestPage(BY_ID[h]);
   else renderHome();
@@ -28522,7 +28532,7 @@ function go(hash) {
 }
 window.addEventListener('hashchange', () => { const h = (location.hash || '').slice(1); if (PATH_MODE) { if (h) go(h); return; } if (h !== ROUTE) { ROUTE = h; route(); } });
 window.addEventListener('popstate', () => { if (!PATH_MODE) return; const h = pathRoute(); if (h !== ROUTE) { ROUTE = h; route(); } });
-document.addEventListener('click', e => { const a = e.target.closest('a[href^="#"]'); if (!a) return; e.preventDefault(); if (a.dataset.pref) PREF_MODE = a.dataset.pref; const h = a.getAttribute('href').slice(1); if (h === ROUTE && /^about/.test(h)) { const el = document.getElementById(h === 'about-give' ? 'about-give' : 'hub'); if (el) el.scrollIntoView({ block: 'start' }); return; } go(h); });
+document.addEventListener('click', e => { const a = e.target.closest('a[href^="#"]'); if (!a) return; e.preventDefault(); if (a.dataset.pref) PREF_MODE = a.dataset.pref; const h = a.getAttribute('href').slice(1); if (h === ROUTE && /^(about|faq)/.test(h)) { const el = document.getElementById(h === 'about-give' ? 'about-give' : /faq/.test(h) ? 'about-faq' : 'hub'); if (el) el.scrollIntoView({ block: 'start' }); return; } go(h); });
 
 /* ═══════════ HUB PAGES ═══════════ */
 const NAV_ITEMS = [['practice', 'Practice'], ['simulate', 'Exam Simulation'], ['lab', 'Response Lab'], ['review', 'Quick Review'], ['community', 'Community'], ['about', 'About']];
@@ -28530,7 +28540,7 @@ let PREF_MODE = 'practice';
 function navKey(active) {
   if (BY_ID[active]) return PREF_MODE === 'simulate' ? 'simulate' : 'practice';
   if (active === 'subjects' || active === 'plt' || String(active).startsWith('area-')) return 'practice';
-  if (active === 'support') return 'about';
+  if (active === 'support' || active === 'faq' || active === 'about-faq' || active === 'about-give') return 'about';
   return active;
 }
 const initials = n => { const w = String(n || '').replace(/@.*/, '').replace(/[^\p{L}\p{N}\s]/gu, ' ').trim().split(/\s+/).filter(Boolean); const t = w.length > 1 ? w[0][0] + w[1][0] : (w[0] || '?').slice(0, 2); return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase(); };
@@ -28560,7 +28570,7 @@ function spark(vals) {
 const DISCLAIMER = 'Comma is an independent study resource, not affiliated with or endorsed by ETS. Praxis® is a trademark of ETS. All content here is original.';
 function foot() {
   return `<footer class="foot"><div><p>${esc(DISCLAIMER)}</p><p>Scores are practice estimates, not official scores. © ${new Date().getFullYear()} ${BRAND}.</p></div>
-    <nav aria-label="Footer"><a href="#community">Community</a><a href="#about">Contact</a><a href="#about-give">Donate</a></nav></footer>`;
+    <nav aria-label="Footer"><a href="#faq">FAQ</a><a href="#community">Community</a><a href="#about">Contact</a><a href="#about-give">Donate</a></nav></footer>`;
 }
 function bindNav() { const b = $('#whoBtn'); if (b) b.onclick = openProfileMenu; const f = $('#fbBtn'); if (f) f.onclick = () => openReport(null); }
 
@@ -28776,18 +28786,34 @@ function renderCommunity() {
     ${foot()}
   </div>`;
 }
+const FAQ = [
+  ['Is Comma really free?', `<p>Yes. There are no ads, no paywall, and no paid tiers. Every test, flashcard, and feature is free to use. Donations are optional and only help keep the site running and growing.</p>`],
+  ['Are these the real exam questions?', `<p>No. Every question, passage, flashcard, and writing prompt was written from scratch for Comma. Nothing is copied from official tests, test-prep books, or other sites.</p><p>Each practice test follows the <b>public</b> outline for the real exam (the topics, how many questions, the time limit, and the question styles) so practice feels close to test day. Comma is independent and isn't affiliated with or endorsed by ETS or any testing organization.</p>`],
+  ['Do you keep a record of my scores?', `<p>No. Your scores, answers, and progress are saved only in your own browser on your own device. They're never sent to me, and I have no way to see them. I don't have that kind of access, and I won't ask for it.</p><p>To remove them, use "Reset" on the home page or on a test's page, or clear your browser's data for the site.</p>`],
+  ['What information do you have about me?', `<p>Only the email address you use to sign in, because your access code is made for that email. Comma doesn't ask for your name, phone number, school, or anything else.</p><p>Donations go through Stripe, so Comma never sees card details.</p>`],
+  ['Why do I need an access code?', `<p>Codes keep the site manageable while it stays free. Most codes change on the 1st of each month, and you'll get the new one by email. Some members have a lifetime code that never changes.</p>`],
+  ['I forgot my access code. What do I do?', `<p>On the sign-in page, choose <b>Forgot your code?</b> to send a quick reset request, or email ${OWNER_EMAIL}. You'll get a new code, and the old one stops working. Tip: if your browser saved your code, click the code box to see it.</p>`],
+  ['Why don\'t my scores show up on another device?', `<p>Because they're stored only in the browser you used (see above). Use the same device and browser to keep your history together.</p>`],
+  ['How close are the practice tests to the real exam?', `<p>Each full simulation uses the same number of questions, time limit, and content categories as the real test, and the questions aim for similar difficulty. Your score is a practice estimate, not a prediction of your official score.</p>`],
+  ['How is my written response scored?', `<p>The Response Lab gives instant feedback by checking your answer against a rubric: the key ideas, your reasoning, evidence, and organization. It's an estimate to help you revise, not an official score.</p>`],
+  ['I found a mistake in a question.', `<p>Thank you! Use <b>Report</b> on the question, post in <a href="${REDDIT}" target="_blank" rel="noopener noreferrer">r/CommaClassroom</a>, or email ${OWNER_EMAIL}. Mistakes get fixed quickly.</p>`],
+  ['Can I use Comma on my phone?', `<p>Yes, everything works on phones and tablets. That said, it's best on a computer screen, especially for full timed tests and the Response Lab, where the bigger screen and a real keyboard help.</p>`],
+];
 function renderAbout() {
   setAccent(null); show('hub');
   $('#hub').innerHTML = nav('about') + `<div class="page">
     <div class="eyebrow">About</div><h1 class="display">Hi, this is <em>Comma</em>.</h1>
     <div class="about-grid" style="margin-top:22px">
       <div>
-        <p>Comma is a free place to practice for teacher certification tests. Pick a subject, answer some questions, and see what you got wrong and why. That's really it.</p>
-        <p>Everything here was written from scratch for Comma: the questions, the flashcards, the writing prompts. Each test follows the public outline for the real one, so it should feel close.</p>
-        <p>If you spot a mistake (it happens), send an email and I'll fix it.</p>
+        <p>Comma is a free place to practice for teacher certification tests. Pick a subject, answer some questions, and see what you got wrong and why.</p>
+        <p>Honestly, I started it for myself. I'd already taken the official tests, and when I began adding endorsements I went looking for good study material again. Most of what I found online felt thin, and even the official prep didn't give me enough practice to feel ready.</p>
+        <p>So I made my own. I wrote questions that follow the real test outlines, and I added some harder ones on purpose, because I wanted the actual exam to feel easy by comparison.</p>
+        <p>Then I kept hearing from other teachers who were short on money and under a lot of pressure, paying for tests, retakes, and prep on top of everything else. What started as my own study notes turned into this site, so they could use it too, for free.</p>
+        <p>Everything here was written from scratch: the questions, the flashcards, the writing prompts. If you spot a mistake (it happens), send an email and I'll fix it.</p>
         <p class="legal">${esc(DISCLAIMER)} Written-response feedback is an estimate, not an official score.</p>
       </div>
       <div>
+        <div class="hi-card">
         <h3>Say hi</h3>
         <div class="copyline"><span class="addr" id="aboutMail">${OWNER_EMAIL}</span><button class="btn quiet" id="copyMail">Copy</button><span class="copied" id="copyMsg" aria-live="polite"></span></div>
         <h3 style="margin-top:28px" id="about-give">Chip in</h3>
@@ -28795,15 +28821,22 @@ function renderAbout() {
         <p class="small muted">Payments go through Stripe. Tax is added at checkout.</p>
         <div class="row" style="margin:12px 0">${STRIPE_A('btn give-btn big', '♥ Donate by card')}</div>
         <p class="small muted">Link not opening? Copy it: <span class="linkline">${STRIPE_LINK}</span></p>
-        <p class="small muted">Want to give in KRW? Just email me.</p>
+        <p class="small muted" style="margin-bottom:0">Want to give in KRW? Just email me.</p>
+        </div>
         ${referralHTML('about')}
       </div>
     </div>
+    <section class="faq" id="about-faq" aria-labelledby="faqH">
+      <h2 class="display" id="faqH" style="font-size:34px;margin:0 0 6px">FAQ</h2>
+      <p class="muted" style="margin:0 0 14px">Tap a question to open it.</p>
+      ${FAQ.map(([q, a], i) => `<details class="faq-q" ${i === 0 ? 'open' : ''}><summary>${esc(q)}</summary><div class="faq-a">${a}</div></details>`).join('')}
+    </section>
     ${foot()}
   </div>`;
   $('#copyMail').onclick = () => { const ok = () => { $('#copyMsg').textContent = 'Copied'; }; const fb = () => { const r = document.createRange(); r.selectNodeContents($('#aboutMail')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $('#copyMsg').textContent = 'Selected, press Ctrl+C'; };
     try { navigator.clipboard.writeText(OWNER_EMAIL).then(ok, fb); } catch (e) { fb(); } };
   if (ROUTE === 'about-give' || ROUTE === 'support') { const el = $('#about-give'); if (el) setTimeout(() => el.scrollIntoView({ block: 'start' }), 30); }
+  if (ROUTE === 'faq' || ROUTE === 'about-faq') { const el = $('#about-faq'); if (el) setTimeout(() => el.scrollIntoView({ block: 'start' }), 30); }
 }
 
 
@@ -29626,8 +29659,8 @@ function memberStats() {
 }
 async function syncProgress() {
   if (MODE !== 'member' || !MEMBER || !DB || !WRITE_OK) return;
-  const { stats, recent } = memberStats();
-  const doc = { name: MEMBER.name, email: MEMBER.email || '', acct: ACCT_EMAIL || '', ck: MEMBER.ck || '', exp: MEMBER.exp || '', key: memberKey(), joinedAt: MEMBER.joinedAt, lastActive: new Date().toISOString(), stats, recent };
+  /* only what sign-in needs; scores and attempts never leave the visitor's browser */
+  const doc = { name: MEMBER.name, email: MEMBER.email || '', ck: MEMBER.ck || '', exp: MEMBER.exp || '', key: memberKey(), joinedAt: MEMBER.joinedAt };
   try { await DB.doc(memberPath()).set(doc); }
   catch (e) { if (isRejected(e)) { WRITE_OK = false; if (!inExam && $('#hub') && !$('#hub').hidden) route(); } }
 }
